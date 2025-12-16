@@ -6,20 +6,25 @@ import {
   ArrowLeft, 
   Play, 
   Plus, 
-  MoreVertical, 
   Image as ImageIcon, 
   Type, 
-  List
+  List, 
+  LayoutTemplate, 
+  Trash2,
+  MoreHorizontal,
+  Save
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
-// Tipe data Slide
+// --- TYPES ---
 export interface Slide {
   id: string;
   type: 'title' | 'content' | 'image';
@@ -34,7 +39,7 @@ interface SlideDeckManagerProps {
   initialSlides?: Slide[];
 }
 
-// --- UPDATED DATA SESUAI PRESENTATION MODE ---
+// --- DATA: DEFAULT SLIDES (Sesuai Presentation Mode) ---
 const defaultSlides: Slide[] = [
   {
     id: '1',
@@ -49,34 +54,34 @@ const defaultSlides: Slide[] = [
     title: 'Sponsorship Status Board',
     bullets: [
       '✅ Bebas Cedera: DEAL (Feedback OK)',
-      '⚠️ Bank BJB: PENDING (Menunggu Konfirmasi)',
-      '⚠️ Flypower: PENDING (Proposal Terkirim)',
+      '⚠️ Bank BJB: PENDING',
+      '⚠️ Flypower: PENDING',
       '⛔ Ayo Indonesia: ON HOLD',
-      '🔄 Eiger: RESUBMIT (H-3/H-1 Bulan)'
+      '🔄 Eiger: RESUBMIT (H-3 Bulan)'
     ],
     note: 'Progress 35% Secured. Fokus kawal BJB & Flypower.'
   },
   {
     id: '3',
     type: 'content',
-    title: 'Performance Metrics (Honor)',
+    title: 'Performance Metrics',
     bullets: [
-      'Kinerja (35%): Eksekusi & Target',
-      'Struktur (25%): Risiko & Hirarki',
-      'Dampak (25%): Efisiensi & Kualitas',
-      'Profesional (15%): Etika & Tim'
+      'Kinerja (35%)',
+      'Struktur (25%)',
+      'Dampak (25%)',
+      'Profesional (15%)'
     ],
-    note: 'Evaluator: SC + Peer Review 360° (Sesama SC saling menilai).'
+    note: 'Evaluator: SC + Peer Review 360°.'
   },
   {
     id: '4',
     type: 'content',
-    title: 'Starting Lineup (Task Force)',
+    title: 'Starting Lineup',
     bullets: [
-      '👑 Advisor: Aris Indro (Guardian)',
-      '🧢 Director: Irsyad Jamal (Decision Maker)',
-      '📝 Secretary: Rizki & Annisa (Admin)',
-      '💰 Finance: Selvi Yulia (Gatekeeper)'
+      '👑 Advisor: Aris Indro',
+      '🧢 Director: Irsyad Jamal',
+      '📝 Secretary: Rizki & Annisa',
+      '💰 Finance: Selvi Yulia'
     ],
     note: 'Tim Inti / Steering Committee.'
   },
@@ -86,23 +91,98 @@ const defaultSlides: Slide[] = [
     title: 'Mission Timeline',
     bullets: [
       'JAN: Open Registration',
-      'FEB: Sponsorship Run (Roadshow)',
+      'FEB: Sponsorship Run',
       'MAR: Registration Closed',
-      'APR: Roster Lock',
-      'MEI: Final Prep (Tech Meeting)',
       'JUN-JUL: MAIN EVENT 🏆'
     ],
     note: 'Roadmap menuju puncak acara.'
   }
 ];
 
+// --- COMPONENT: SLIDE CARD ---
+const SlideCard = ({ slide, index, onClick, onDelete }: { slide: Slide, index: number, onClick: () => void, onDelete: (e: any) => void }) => {
+    const getTypeIcon = () => {
+        switch(slide.type) {
+            case 'title': return <Type className="h-3 w-3" />;
+            case 'image': return <ImageIcon className="h-3 w-3" />;
+            default: return <List className="h-3 w-3" />;
+        }
+    };
+
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -8, transition: { duration: 0.2 } }}
+            onClick={onClick}
+            className="group relative aspect-video cursor-pointer rounded-[20px] bg-[#121212] p-1 ring-1 ring-white/10 transition-all hover:ring-[#ffbe00] hover:shadow-[0_10px_30px_-10px_rgba(255,190,0,0.3)]"
+        >
+            {/* Inner Content (Glass Look) */}
+            <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[16px] bg-white/5 p-5 backdrop-blur-sm">
+                
+                {/* Header: Number & Type */}
+                <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="border-none bg-black/50 text-[#ffbe00] font-mono text-[10px] px-2 h-5">
+                        SLIDE {String(index + 1).padStart(2, '0')}
+                    </Badge>
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-gray-400">
+                        {getTypeIcon()}
+                    </div>
+                </div>
+
+                {/* Body: Preview */}
+                <div className="flex-1 overflow-hidden">
+                    <h4 className="font-bold text-white line-clamp-2 text-sm leading-snug mb-2 group-hover:text-[#ffbe00] transition-colors">
+                        {slide.title}
+                    </h4>
+                    
+                    {slide.type === 'image' && slide.imageUrl ? (
+                        <div className="h-16 w-full rounded-md bg-cover bg-center opacity-60 grayscale group-hover:grayscale-0 transition-all" style={{ backgroundImage: `url(${slide.imageUrl})` }} />
+                    ) : (
+                        <div className="space-y-1.5">
+                            {slide.bullets.slice(0, 2).map((b, i) => (
+                                <div key={i} className="flex items-start gap-2">
+                                    <span className="mt-1 h-1 w-1 rounded-full bg-gray-600 group-hover:bg-[#ffbe00]" />
+                                    <p className="text-[10px] text-gray-400 line-clamp-1">{b}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer: Notes Indicator */}
+                {slide.note && (
+                    <div className="mt-2 flex items-center gap-1 text-[9px] text-gray-600 font-mono">
+                        <span className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse" />
+                        SPEAKER NOTES
+                    </div>
+                )}
+            </div>
+
+            {/* Hover Actions */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button 
+                    size="icon" 
+                    variant="destructive" 
+                    className="h-7 w-7 rounded-full" 
+                    onClick={onDelete}
+                >
+                    <Trash2 className="h-3 w-3" />
+                </Button>
+            </div>
+        </motion.div>
+    );
+};
+
+// --- MAIN COMPONENT ---
 export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: SlideDeckManagerProps) {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
   const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
-  // Keyboard shortcut F5 untuk pindah ke halaman presentasi
+  // F5 Shortcut
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'F5') {
@@ -114,19 +194,27 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [meetingId, router]);
 
-  const handleUpdateSlide = (updatedSlide: Slide) => {
-    setSlides(slides.map(s => s.id === updatedSlide.id ? updatedSlide : s));
+  // Actions
+  const handleUpdateSlide = (updated: Slide) => {
+    setSlides(slides.map(s => s.id === updated.id ? updated : s));
   };
 
   const handleAddSlide = () => {
     const newSlide: Slide = {
       id: Date.now().toString(),
       type: 'content',
-      title: 'New Slide',
-      bullets: ['Add your point here'],
+      title: 'New Strategy',
+      bullets: ['Tactical point 1...'],
     };
     setSlides([...slides, newSlide]);
     setEditingSlide(newSlide);
+    toast({ description: "New slide added to the deck." });
+  };
+
+  const handleDeleteSlide = (e: any, id: string) => {
+    e.stopPropagation();
+    setSlides(slides.filter(s => s.id !== id));
+    toast({ description: "Slide removed." });
   };
 
   const startPresentation = () => {
@@ -134,178 +222,185 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
   };
 
   return (
-    <div className="relative flex h-full flex-col bg-background">
-      {/* --- TOP APP BAR (NAVIGATION) --- */}
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-black/40 px-6 py-4 backdrop-blur-md">
+    <div className="relative flex h-full flex-col bg-[#050505] font-sans selection:bg-[#ffbe00] selection:text-black">
+      
+      {/* 1. COMMAND HEADER */}
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-white/5 bg-[#050505]/80 px-6 py-4 backdrop-blur-xl">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => router.back()}
-            className="rounded-full hover:bg-white/10"
+            className="h-10 w-10 rounded-full border border-white/10 bg-white/5 hover:bg-[#ffbe00] hover:text-black hover:border-[#ffbe00] transition-all"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="hidden flex-col md:flex">
-            <span className="text-xs font-medium text-muted-foreground">Meeting / Slide Deck</span>
-            <h1 className="text-lg font-bold leading-none tracking-tight">Slide Editor</h1>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-green-500">Editor Mode</span>
+            </div>
+            <h1 className="text-xl font-black tracking-tight text-white uppercase">
+              Tactical <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]">Deck</span>
+            </h1>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-           <span className="mr-2 text-xs font-medium text-muted-foreground hidden sm:block">
-            {slides.length} Slides
-           </span>
+          <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/5">
+            <LayoutTemplate className="h-4 w-4 text-gray-400" />
+            <span className="text-xs font-mono text-gray-300">
+                {slides.length} <span className="text-gray-500">CARDS</span>
+            </span>
+          </div>
+
           <Button 
             onClick={startPresentation}
-            className="rounded-full bg-[#ca1f3d] font-bold text-[#ffbe00] hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_15px_rgba(202,31,61,0.5)]"
+            className="h-10 rounded-full bg-[#ca1f3d] px-6 font-bold text-white hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_20px_rgba(202,31,61,0.5)]"
           >
             <Play className="mr-2 h-4 w-4 fill-current" />
-            Start Presenting
-          </Button>
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <MoreVertical className="h-5 w-5" />
+            LIVE MODE
           </Button>
         </div>
       </header>
 
-      {/* --- MAIN EDITOR CONTENT --- */}
-      <ScrollArea className="flex-1 p-6 sm:p-10">
-        <div className="mx-auto max-w-6xl">
-            {/* Grid Layout */}
+      {/* 2. MAIN GRID (CANVAS) */}
+      <ScrollArea className="flex-1">
+        <div className="mx-auto max-w-[1600px] p-6 sm:p-10">
             <motion.div 
                 layout
                 className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-                {/* Add Slide Button */}
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleAddSlide}
-                    className="group flex aspect-video flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/5 transition-colors hover:border-[#ffbe00]/50 hover:bg-[#ffbe00]/5"
-                >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-[#ffbe00] group-hover:text-black">
-                        <Plus className="h-6 w-6" />
-                    </div>
-                    <span className="mt-3 font-medium text-muted-foreground group-hover:text-[#ffbe00]">Add Slide</span>
-                </motion.button>
-
-                {/* Slides List */}
-                <AnimatePresence>
+                {/* Deck Cards */}
+                <AnimatePresence mode="popLayout">
                     {slides.map((slide, index) => (
-                        <motion.div
-                            key={slide.id}
-                            layout
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.5 }}
-                            whileHover={{ y: -5 }}
-                            onClick={() => setEditingSlide(slide)}
-                            className="group relative aspect-video cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-card shadow-lg transition-all hover:ring-2 hover:ring-[#ffbe00]"
-                        >
-                            {/* Slide Number Badge */}
-                            <div className="absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-xs font-bold backdrop-blur-sm">
-                                {index + 1}
-                            </div>
-
-                            {/* Mini Preview Content */}
-                            <div className="flex h-full flex-col p-4">
-                                <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                                    {slide.type === 'image' ? <ImageIcon className="h-3 w-3" /> : slide.type === 'title' ? <Type className="h-3 w-3" /> : <List className="h-3 w-3" />}
-                                    {slide.type}
-                                </div>
-                                <h3 className="line-clamp-2 text-sm font-bold leading-tight text-foreground">
-                                    {slide.title}
-                                </h3>
-                                {slide.type === 'image' && slide.imageUrl && (
-                                    <div className="mt-2 h-full w-full overflow-hidden rounded-md bg-muted/20">
-                                        <img src={slide.imageUrl} alt="Slide" className="h-full w-full object-cover opacity-50 grayscale transition-all group-hover:grayscale-0" />
-                                    </div>
-                                )}
-                                {slide.type !== 'image' && (
-                                    <div className="mt-3 space-y-1.5">
-                                        {slide.bullets.slice(0, 3).map((bullet, i) => (
-                                            <div key={i} className="flex items-center gap-2">
-                                                <div className="h-1 w-1 rounded-full bg-[#ffbe00]" />
-                                                <p className="line-clamp-1 text-[10px] text-muted-foreground">{bullet}</p>
-                                            </div>
-                                        ))}
-                                        {slide.bullets.length > 3 && (
-                                            <p className="text-[9px] italic text-muted-foreground/50">+{slide.bullets.length - 3} more</p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
+                        <SlideCard 
+                            key={slide.id} 
+                            slide={slide} 
+                            index={index} 
+                            onClick={() => setEditingSlide(slide)} 
+                            onDelete={(e) => handleDeleteSlide(e, slide.id)}
+                        />
                     ))}
                 </AnimatePresence>
+
+                {/* Add New Card (Ghost Style) */}
+                <motion.button
+                    layout
+                    whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.08)" }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleAddSlide}
+                    className="group flex aspect-video flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-white/10 bg-white/5 transition-all hover:border-[#ffbe00]/50"
+                >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] border border-white/10 group-hover:bg-[#ffbe00] group-hover:text-black transition-colors">
+                        <Plus className="h-6 w-6" />
+                    </div>
+                    <span className="mt-4 font-bold text-gray-500 uppercase tracking-widest text-xs group-hover:text-[#ffbe00]">
+                        New Tactic
+                    </span>
+                </motion.button>
+
             </motion.div>
         </div>
       </ScrollArea>
 
-      {/* --- EDIT DRAWER (SHEET) --- */}
+      {/* 3. EDIT DRAWER (TACTICAL PANEL) */}
       <Sheet open={!!editingSlide} onOpenChange={() => setEditingSlide(null)}>
-        <SheetContent className="w-[400px] border-l-white/10 bg-background/95 backdrop-blur-xl">
-            <SheetHeader className="mb-6">
-                <SheetTitle>Edit Slide</SheetTitle>
-            </SheetHeader>
+        <SheetContent className="w-full sm:w-[480px] border-l-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl p-0 shadow-2xl">
             {editingSlide && (
-                <div className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase text-muted-foreground">Type</label>
-                        <div className="flex gap-2">
-                            {['title', 'content', 'image'].map((type) => (
-                                <Button
-                                    key={type}
-                                    variant={editingSlide.type === type ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => handleUpdateSlide({ ...editingSlide, type: type as any })}
-                                    className="flex-1 capitalize"
-                                >
-                                    {type}
-                                </Button>
-                            ))}
+                <div className="flex h-full flex-col">
+                    {/* Drawer Header */}
+                    <div className="border-b border-white/10 p-6">
+                        <div className="flex items-center gap-2 mb-2">
+                             <Badge variant="outline" className="text-[#ffbe00] border-[#ffbe00]/30 bg-[#ffbe00]/10 font-mono text-[10px]">EDITING</Badge>
+                             <span className="text-xs text-gray-500 font-mono">ID: {editingSlide.id}</span>
                         </div>
+                        <SheetTitle className="text-2xl font-black text-white uppercase">Slide Config</SheetTitle>
+                        <SheetDescription>Atur konten visual untuk presentasi.</SheetDescription>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase text-muted-foreground">Title</label>
-                        <Input 
-                            value={editingSlide.title} 
-                            onChange={(e) => handleUpdateSlide({...editingSlide, title: e.target.value})}
-                            className="bg-muted/50 font-bold"
-                        />
-                    </div>
+                    {/* Form Content */}
+                    <ScrollArea className="flex-1 p-6">
+                        <div className="space-y-8">
+                            
+                            {/* Type Selector */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold uppercase text-gray-500 tracking-wider">Layout Type</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {['title', 'content', 'image'].map((type) => (
+                                        <div 
+                                            key={type}
+                                            onClick={() => handleUpdateSlide({ ...editingSlide, type: type as any })}
+                                            className={`cursor-pointer rounded-lg border px-3 py-3 text-center transition-all ${
+                                                editingSlide.type === type 
+                                                ? 'border-[#ffbe00] bg-[#ffbe00]/10 text-[#ffbe00]' 
+                                                : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+                                            }`}
+                                        >
+                                            <span className="text-xs font-bold uppercase">{type}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
-                    {editingSlide.type === 'image' ? (
-                        <div className="space-y-2">
-                             <label className="text-xs font-semibold uppercase text-muted-foreground">Image URL</label>
-                             <Input 
-                                value={editingSlide.imageUrl || ''} 
-                                onChange={(e) => handleUpdateSlide({...editingSlide, imageUrl: e.target.value})}
-                                placeholder="https://..."
-                            />
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold uppercase text-muted-foreground">Content Points (One per line)</label>
-                            <Textarea 
-                                value={editingSlide.bullets.join('\n')} 
-                                onChange={(e) => handleUpdateSlide({...editingSlide, bullets: e.target.value.split('\n')})}
-                                className="min-h-[200px] bg-muted/50 font-mono text-xs leading-relaxed"
-                                placeholder="- Point 1..."
-                            />
-                        </div>
-                    )}
+                            {/* Title Input */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold uppercase text-gray-500 tracking-wider">Headline</label>
+                                <Input 
+                                    value={editingSlide.title} 
+                                    onChange={(e) => handleUpdateSlide({...editingSlide, title: e.target.value})}
+                                    className="bg-white/5 border-white/10 h-12 font-bold text-lg focus:border-[#ca1f3d] transition-all"
+                                />
+                            </div>
 
-                    <div className="space-y-2">
-                         <label className="text-xs font-semibold uppercase text-muted-foreground">Speaker Notes / Evaluator Info</label>
-                         <Textarea 
-                            value={editingSlide.note || ''}
-                            onChange={(e) => handleUpdateSlide({...editingSlide, note: e.target.value})}
-                            className="bg-yellow-500/10 text-yellow-200/80 min-h-[100px]" 
-                            placeholder="Add notes..."
-                        />
+                            {/* Dynamic Content */}
+                            {editingSlide.type === 'image' ? (
+                                <div className="space-y-3">
+                                     <label className="text-xs font-bold uppercase text-gray-500 tracking-wider">Visual Source</label>
+                                     <Input 
+                                        value={editingSlide.imageUrl || ''} 
+                                        onChange={(e) => handleUpdateSlide({...editingSlide, imageUrl: e.target.value})}
+                                        placeholder="https://image-url.com..."
+                                        className="bg-white/5 border-white/10 font-mono text-xs"
+                                    />
+                                    {editingSlide.imageUrl && (
+                                        <div className="mt-2 aspect-video w-full rounded-lg border border-white/10 bg-cover bg-center" style={{ backgroundImage: `url(${editingSlide.imageUrl})` }} />
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase text-gray-500 tracking-wider">Tactical Points</label>
+                                    <Textarea 
+                                        value={editingSlide.bullets.join('\n')} 
+                                        onChange={(e) => handleUpdateSlide({...editingSlide, bullets: e.target.value.split('\n')})}
+                                        className="min-h-[200px] bg-white/5 border-white/10 font-medium leading-relaxed focus:border-[#ca1f3d] transition-all"
+                                        placeholder="- Enter point..."
+                                    />
+                                    <p className="text-[10px] text-gray-500">* Pisahkan dengan baris baru (Enter)</p>
+                                </div>
+                            )}
+
+                            {/* Notes */}
+                            <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+                                 <label className="flex items-center gap-2 text-xs font-bold uppercase text-yellow-500 tracking-wider mb-2">
+                                    <Save className="h-3 w-3" /> Speaker Notes
+                                 </label>
+                                 <Textarea 
+                                    value={editingSlide.note || ''}
+                                    onChange={(e) => handleUpdateSlide({...editingSlide, note: e.target.value})}
+                                    className="bg-transparent border-none text-yellow-200/80 text-xs min-h-[80px] focus-visible:ring-0 p-0" 
+                                    placeholder="Catatan rahasia untuk presenter..."
+                                />
+                            </div>
+
+                        </div>
+                    </ScrollArea>
+                    
+                    {/* Drawer Footer */}
+                    <div className="border-t border-white/10 p-6 bg-[#0a0a0a]">
+                        <Button className="w-full bg-white text-black hover:bg-gray-200 font-bold" onClick={() => setEditingSlide(null)}>
+                            Save Configuration
+                        </Button>
                     </div>
                 </div>
             )}
