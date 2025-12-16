@@ -63,7 +63,7 @@ export default function MeetingPage({ params }: MeetingPageProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <Agenda items={meeting.agenda} />
+          {meeting.agenda && <Agenda items={meeting.agenda} />}
           <Attendees members={meeting.attendees} isSynced={meeting.isSyncedToGoogle}/>
         </div>
         
@@ -81,7 +81,7 @@ export default function MeetingPage({ params }: MeetingPageProps) {
               </Card>
             </TabsContent>
             <TabsContent value="minutes">
-              <MoMEditor initialMinutes={meeting.minutes} />
+              <MoMEditor initialMinutes={meeting.minutes} meetingId={meeting.id}/>
             </TabsContent>
           </Tabs>
         </div>

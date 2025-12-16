@@ -3,23 +3,27 @@ import { useState, useTransition } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Bot, Sparkles, Copy, Save } from "lucide-react";
+import { Bot, Sparkles, Copy, Save, RefreshCcw, CheckCircle, Loader2 } from "lucide-react";
 import { AiMomGenerator } from "./ai-mom-generator";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
 
 interface MoMEditorProps {
   initialMinutes: string | null;
+  meetingId: string;
 }
 
-export function MoMEditor({ initialMinutes }: MoMEditorProps) {
+type SyncState = 'idle' | 'loading' | 'success';
+
+export function MoMEditor({ initialMinutes, meetingId }: MoMEditorProps) {
   const [minutes, setMinutes] = useState(initialMinutes || "");
   const [isAiOpen, setAiOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isSavePending, startSaveTransition] = useTransition();
+  const [syncState, setSyncState] = useState<SyncState>('idle');
   const { toast } = useToast();
 
   const handleSave = () => {
-    startTransition(() => {
+    startSaveTransition(() => {
       // Mock saving to a database
       console.log("Saving minutes:", minutes);
       toast({
@@ -35,6 +39,23 @@ export function MoMEditor({ initialMinutes }: MoMEditorProps) {
         description: `Task created for: "${actionItem.substring(0, 30)}..."`,
       });
   }
+
+  const handleSyncToCalendar = () => {
+    setSyncState('loading');
+    // Mock API call to sync MoM to Google Calendar
+    setTimeout(() => {
+        const momLink = `https://app.bcc2026.com/mom/${meetingId}`;
+        const descriptionUpdate = `\n--------------------------------\n✅ OFFICIAL MoM:\n${momLink}\nStatus: Finalized`;
+
+        console.log("PATCH to Google Calendar Event with description append:", descriptionUpdate);
+
+        setSyncState('success');
+        toast({
+            title: "Success!",
+            description: "MoM attached to Google Calendar invitation!",
+        });
+    }, 1500);
+  };
 
   const parseAndRenderMinutes = (text: string) => {
     return text.split('\n').map((line, index) => {
@@ -83,15 +104,35 @@ export function MoMEditor({ initialMinutes }: MoMEditorProps) {
               className="bg-background/50"
             />
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => navigator.clipboard.writeText(minutes)}>
-              <Copy className="mr-2 h-4 w-4" />
-              Copy
-            </Button>
-            <Button onClick={handleSave} disabled={isPending}>
-              <Save className="mr-2 h-4 w-4" />
-              {isPending ? "Saving..." : "Save"}
-            </Button>
+          <div className="flex justify-between items-center gap-2">
+            <div>
+                 <Button 
+                    onClick={handleSyncToCalendar} 
+                    disabled={syncState !== 'idle' || !minutes}
+                    className={`
+                        ${syncState === 'idle' && 'bg-accent text-accent-foreground hover:bg-accent/90'}
+                        ${syncState === 'loading' && 'bg-muted text-muted-foreground'}
+                        ${syncState === 'success' && 'bg-primary text-primary-foreground'}
+                    `}
+                >
+                    {syncState === 'idle' && <RefreshCcw className="mr-2 h-4 w-4" />}
+                    {syncState === 'loading' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {syncState === 'success' && <CheckCircle className="mr-2 h-4 w-4" />}
+                    {syncState === 'idle' && "Finalize & Sync to Calendar"}
+                    {syncState === 'loading' && "Syncing..."}
+                    {syncState === 'success' && "Synced to Calendar"}
+                </Button>
+            </div>
+            <div className="flex gap-2">
+                <Button variant="outline" onClick={() => navigator.clipboard.writeText(minutes)}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy
+                </Button>
+                <Button onClick={handleSave} disabled={isSavePending}>
+                  <Save className="mr-2 h-4 w-4" />
+                  {isSavePending ? "Saving..." : "Save"}
+                </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -1,4 +1,3 @@
-
 import { PlaceHolderImages } from './placeholder-images';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
@@ -78,20 +77,33 @@ export const meetings = [
   {
     id: '1',
     title: 'Rapat Koordinasi: Persiapan BCC 2026',
-    date: new Date(),
+    date: new Date(new Date().setDate(new Date().getDate() - 2)),
     startTime: '10:00 AM',
     endTime: '11:30 AM',
     attendees: steeringCommittee.map((m, i) => ({ ...m, id: i+1 })),
-    status: 'Live',
+    status: 'Completed',
     agenda: [
       'Finalisasi Visi & Misi Acara (15 min)',
       'Pembahasan Anggaran & Sponsor Utama (20 min)',
       'Penetapan Koordinator Divisi (30 min)',
       'Q&A dan Langkah Selanjutnya (15 min)',
     ],
-    minutes: null,
+    minutes: 'Project Director (Irsyad) approved the budget.\nStructure fixed: Rizki (Sek 1), Annisa (Sek 2).\n[ACTION] Next Step: Briefing Teknis scheduled for next week.',
     isSyncedToGoogle: true,
     googleMeetLink: 'https://meet.google.com/bcc-2026-meet',
+  },
+  {
+    id: '3',
+    title: 'Development Stand-up',
+    date: new Date(),
+    startTime: '9:00 AM',
+    endTime: '9:15 AM',
+    attendees: [teamMembers[2], teamMembers[3], teamMembers[4]],
+    status: 'Live',
+    agenda: ['Quick updates from everyone'],
+    minutes: null,
+    isSyncedToGoogle: false,
+    googleMeetLink: null,
   },
   {
     id: '2',
@@ -102,18 +114,6 @@ export const meetings = [
     attendees: [teamMembers[1], teamMembers[0]],
     status: 'Completed',
     minutes: `**Summary:**\nThe team reviewed the new user onboarding flow. Maria presented wireframes, and Alex provided feedback on scope alignment.\n\n**Decisions:**\n- Proceed with Option B for the welcome screen.\n- A/B test the tutorial placement.\n\n**Action Items:**\n- [ACTION] @Maria to finalize high-fidelity mockups by EOD Friday.\n- [ ] @Alex to prepare the product spec for the new flow.`,
-    isSyncedToGoogle: false,
-    googleMeetLink: null,
-  },
-  {
-    id: '3',
-    title: 'Development Stand-up',
-    date: new Date(new Date().setDate(new Date().getDate() + 1)),
-    startTime: '9:00 AM',
-    endTime: '9:15 AM',
-    attendees: [teamMembers[2], teamMembers[3], teamMembers[4]],
-    status: 'Upcoming',
-    minutes: 'Quick updates from everyone. No blockers reported.',
     isSyncedToGoogle: false,
     googleMeetLink: null,
   },

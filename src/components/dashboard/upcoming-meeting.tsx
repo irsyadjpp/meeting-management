@@ -9,7 +9,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 
 export function UpcomingMeeting() {
-  const upcomingMeeting = meetings.find(m => m.status === 'Upcoming');
+  const upcomingMeeting = meetings.find(m => new Date(m.date) >= new Date() && m.status !== 'Completed');
   const bgImage = PlaceHolderImages.find(img => img.id === 'upcomingMeeting');
 
   if (!upcomingMeeting) {
@@ -20,6 +20,8 @@ export function UpcomingMeeting() {
       </Card>
     );
   }
+  
+  const isLive = upcomingMeeting.status === 'Live';
 
   return (
     <Card className="glassmorphic relative overflow-hidden group w-full h-full flex flex-col">
@@ -49,10 +51,10 @@ export function UpcomingMeeting() {
               <span>{upcomingMeeting.startTime}</span>
             </div>
           </div>
-          <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+          <Button asChild className={`text-primary-foreground w-full sm:w-auto ${isLive ? 'bg-primary animate-pulse' : 'bg-primary'}`}>
             <Link href={`/meeting/${upcomingMeeting.id}`}>
               <Video className="mr-2 h-4 w-4" />
-              Join Meeting
+              {isLive ? 'Join Live Meeting' : 'Go to Meeting'}
             </Link>
           </Button>
         </div>
