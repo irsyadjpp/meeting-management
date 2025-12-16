@@ -1,6 +1,6 @@
 
 import { PlaceHolderImages } from './placeholder-images';
-import type { Slide } from '@/hooks/use-slide-deck';
+import type { Slide } from '@/components/meeting/slide-deck-manager';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
 
@@ -91,21 +91,22 @@ export const meetings: Array<{
 }> = [
   {
     id: '1',
-    title: 'Rapat Koordinasi: Persiapan BCC 2026',
-    date: new Date(new Date().setDate(new Date().getDate() - 2)),
-    startTime: '10:00 AM',
-    endTime: '11:30 AM',
+    title: 'Koordinasi Strategis & Budgeting BCC',
+    date: new Date('2025-12-16T18:00:00'),
+    startTime: '6:00 PM',
+    endTime: '7:00 PM',
     attendees: steeringCommittee.map((m, i) => ({ ...m, id: i+1 })),
-    status: 'Completed',
+    status: 'Upcoming',
     agenda: [
-      'Finalisasi Visi & Misi Acara (15 min)',
-      'Pembahasan Anggaran & Sponsor Utama (20 min)',
-      'Penetapan Koordinator Divisi (30 min)',
-      'Q&A dan Langkah Selanjutnya (15 min)',
+      'Pembukaan & Review Singkat',
+      'Update Sponsorship',
+      'Skema Honorarium & Budgeting',
+      'Pembagian Tugas',
+      'Next Step Persiapan',
     ],
     minutes: 'Project Director (Irsyad) approved the budget.\nStructure fixed: Rizki (Sek 1), Annisa (Sek 2).\n[ACTION] Next Step: Briefing Teknis scheduled for next week.',
     isSyncedToGoogle: true,
-    googleMeetLink: 'https://meet.google.com/bcc-2026-meet',
+    googleMeetLink: 'https://meet.google.com/bwu-qejg-ywq',
     slides: [
         { id: 'slide-1', type: 'title', title: 'BCC 2026 Coordination Meeting', bullets: ['Integritas & Sportivitas'], note: 'Opening slide' },
         { id: 'slide-2', type: 'content', title: 'Agenda Hari Ini', bullets: ['Update Sponsorship', 'Pembagian Tugas', 'Budgeting'], note: 'Main points for today' },
