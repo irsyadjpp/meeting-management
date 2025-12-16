@@ -1,15 +1,14 @@
-import { getMeetingById, presentationSlides } from "@/lib/data";
+import { getMeetingById } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Agenda } from "@/components/meeting/agenda";
 import { Attendees } from "@/components/meeting/attendees";
-import { PresentationView } from "@/components/meeting/presentation-view";
 import { MoMEditor } from "@/components/meeting/mom-editor";
-import { Calendar, Clock, Users, Video, Link as LinkIcon, CheckCircle } from "lucide-react";
+import { Calendar, Clock, Users, Video, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import { SlideDeckManager } from "@/components/meeting/slide-deck-manager";
 
 type MeetingPageProps = {
   params: { id: string };
@@ -67,23 +66,9 @@ export default function MeetingPage({ params }: MeetingPageProps) {
           <Attendees members={meeting.attendees} isSynced={meeting.isSyncedToGoogle}/>
         </div>
         
-        <div className="lg:col-span-2">
-          <Tabs defaultValue="presentation" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="presentation">Presentation</TabsTrigger>
-              <TabsTrigger value="minutes">Minutes of Meeting</TabsTrigger>
-            </TabsList>
-            <TabsContent value="presentation">
-              <Card className="glassmorphic">
-                <CardContent className="p-2 sm:p-4">
-                  <PresentationView slides={presentationSlides} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="minutes">
-              <MoMEditor initialMinutes={meeting.minutes} meetingId={meeting.id}/>
-            </TabsContent>
-          </Tabs>
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <SlideDeckManager initialSlides={meeting.slides || []} agenda={meeting.agenda}/>
+          <MoMEditor initialMinutes={meeting.minutes} meetingId={meeting.id}/>
         </div>
       </div>
     </div>

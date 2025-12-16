@@ -1,5 +1,6 @@
 
 import { PlaceHolderImages } from './placeholder-images';
+import type { Slide } from '@/hooks/use-slide-deck';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
 
@@ -74,7 +75,20 @@ export const divisions = [
     }
 ];
 
-export const meetings = [
+export const meetings: Array<{
+    id: string;
+    title: string;
+    date: Date;
+    startTime: string;
+    endTime: string;
+    attendees: any[];
+    status: 'Completed' | 'Upcoming' | 'Live';
+    agenda: string[];
+    minutes: string | null;
+    isSyncedToGoogle: boolean;
+    googleMeetLink: string | null;
+    slides?: Slide[];
+}> = [
   {
     id: '1',
     title: 'Rapat Koordinasi: Persiapan BCC 2026',
@@ -92,6 +106,11 @@ export const meetings = [
     minutes: 'Project Director (Irsyad) approved the budget.\nStructure fixed: Rizki (Sek 1), Annisa (Sek 2).\n[ACTION] Next Step: Briefing Teknis scheduled for next week.',
     isSyncedToGoogle: true,
     googleMeetLink: 'https://meet.google.com/bcc-2026-meet',
+    slides: [
+        { id: 'slide-1', type: 'title', title: 'BCC 2026 Coordination Meeting', bullets: ['Integritas & Sportivitas'], note: 'Opening slide' },
+        { id: 'slide-2', type: 'content', title: 'Agenda Hari Ini', bullets: ['Update Sponsorship', 'Pembagian Tugas', 'Budgeting'], note: 'Main points for today' },
+        { id: 'slide-3', type: 'image', title: 'Venue Layout', bullets: [], imageUrl: 'https://picsum.photos/seed/layout/1280/720', note: 'Discuss the venue plan' }
+    ]
   },
   {
     id: '3',
@@ -137,10 +156,5 @@ export const meetings = [
   },
 ];
 
-export const presentationSlides = [
-  findImage('slide1'),
-  findImage('slide2'),
-  findImage('slide3'),
-];
 
 export const getMeetingById = (id: string) => meetings.find(m => m.id === id);
