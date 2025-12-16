@@ -1,32 +1,29 @@
-import { UpcomingMeeting } from "@/components/dashboard/upcoming-meeting";
-import { QuickActions } from "@/components/dashboard/quick-actions";
-import { TeamCarousel } from "@/components/dashboard/team-carousel";
-import { MeetingList } from "@/components/dashboard/meeting-list";
-import { CalendarWidget } from "@/components/dashboard/calendar-widget";
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useGoogleCalendar } from '@/hooks/use-google-calendar';
+import { LoginScreen } from '@/components/auth/login-screen';
+
+export default function HomePage() {
+  const { isAuthenticated, user } = useGoogleCalendar();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const role = user.role.toLowerCase().replace(' ', '-');
+      router.replace(`/${role}/dashboard`);
+    }
+  }, [isAuthenticated, user, router]);
+
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
+
+  // Render a loading state while redirecting
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back! Here's your meeting overview.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div className="lg:col-span-2 xl:col-span-3">
-          <UpcomingMeeting />
-        </div>
-        <div className="lg:col-span-1 xl:col-span-1 row-span-2">
-           <QuickActions />
-        </div>
-        <div className="lg:col-span-2 xl:col-span-3">
-          <MeetingList />
-        </div>
-        <div className="lg:col-span-3 xl:col-span-4">
-           <TeamCarousel />
-        </div>
-      </div>
+    <div className="flex h-screen items-center justify-center">
+      <p>Loading your dashboard...</p>
     </div>
   );
 }

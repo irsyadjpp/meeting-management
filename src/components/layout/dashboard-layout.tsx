@@ -37,10 +37,9 @@ import {
 } from '../ui/dropdown-menu';
 import { useState, useEffect } from 'react';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
-import { LoginScreen } from '@/components/auth/login-screen';
 
 const navItems = [
-  { href: '/', icon: LayoutGrid, label: 'Dashboard' },
+  { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
   { href: '/meeting', icon: Video, label: 'Meetings' },
   { href: '/team', icon: Users, label: 'Team' },
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
@@ -98,20 +97,9 @@ function Header() {
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [isClient, setIsClient] = useState(false);
-  const { isAuthenticated } = useGoogleCalendar();
+  const { user } = useGoogleCalendar();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null; // Or a loading spinner
-  }
-
-  if (!isAuthenticated) {
-    return <LoginScreen />;
-  }
+  const rolePrefix = user?.role ? `/${user.role.toLowerCase().replace(' ', '-')}` : '';
 
   return (
     <SidebarProvider>
@@ -121,20 +109,25 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const itemPath = rolePrefix + item.href.replace('/dashboard', ''); // dashboard is the root
+              if (item.href === '/dashboard') {
+                 itemPath = rolePrefix + '/dashboard';
+              }
+              return(
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.href}
+                    isActive={pathname === itemPath}
                     tooltip={item.label}
                   >
-                  <Link href={item.href}>
+                  <Link href={itemPath}>
                     <item.icon />
                     <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            ))}
+            )})}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -142,10 +135,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === '/settings'}
+                isActive={pathname === `${rolePrefix}/settings`}
                 tooltip="Settings"
               >
-                <Link href="/settings">
+                <Link href={`${rolePrefix}/settings`}>
                   <Settings />
                   <span>Settings</span>
                 </Link>
@@ -155,7 +148,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        {isClient ? <Header /> : <div className="h-16 border-b" />}
+        <Header />
         <main className="flex-1 overflow-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { GoogleCalendarProvider } from '@/hooks/use-google-calendar';
 
 export const metadata: Metadata = {
@@ -23,9 +22,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <GoogleCalendarProvider>
-            <DashboardLayout>
-              {children}
-            </DashboardLayout>
+            {children}
             <Toaster />
         </GoogleCalendarProvider>
       </body>
