@@ -127,50 +127,119 @@ const SlideSponsorship = () => {
   );
 };
 
-// SLIDE 3: BUDGETING (THE FUEL GAUGE)
-const SlideBudgeting = () => (
-  <div className="flex h-full flex-col px-12 py-8">
-    <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-6">
-      <h2 className="text-4xl font-bold text-white">HONORARIUM SCHEME</h2>
-      <div className="text-right">
-        <p className="text-sm text-gray-400">TOTAL ALLOCATION</p>
-        <p className="text-3xl font-mono font-bold text-[#ffbe00]">IDR 150.000.000</p>
+// SLIDE 3: BUDGETING & HONOR SCHEME (PERFORMANCE METRICS) - REVISED
+const SlideBudgeting = () => {
+  const criteria = [
+    { 
+      label: "KINERJA (Execution)", 
+      value: 35, 
+      color: "bg-[#ffbe00]", 
+      desc: "Eksekusi, Solusi Masalah, Pencapaian Target" 
+    },
+    { 
+      label: "STRUKTUR (Role)", 
+      value: 25, 
+      color: "bg-[#ca1f3d]", 
+      desc: "Tingkat Risiko, Keahlian Khusus, Hirarki" 
+    },
+    { 
+      label: "DAMPAK (Impact)", 
+      value: 25, 
+      color: "bg-blue-500", 
+      desc: "Efisiensi Biaya, Kualitas Output" 
+    },
+    { 
+      label: "PROFESIONAL (Attitude)", 
+      value: 15, 
+      color: "bg-purple-500", 
+      desc: "Etika, Komunikasi, Kerjasama Tim" 
+    },
+  ];
+
+  return (
+    <div className="flex h-full w-full gap-8 px-12 py-8">
+      {/* LEFT: Scoring Matrix (The Fuel Gauges) */}
+      <div className="flex flex-[2] flex-col justify-center">
+        <div className="mb-8 border-b border-white/10 pb-4">
+            <h2 className="text-4xl font-black text-white uppercase">
+                Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]">Metrics</span>
+            </h2>
+            <p className="mt-2 text-gray-400">Dasar perhitungan honorarium berbasis poin (Max Skor: 80).</p>
+        </div>
+
+        <div className="space-y-6">
+            {criteria.map((item, i) => (
+                <motion.div 
+                    key={i}
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.15 }}
+                    className="relative"
+                >
+                    <div className="mb-2 flex justify-between text-sm font-bold uppercase tracking-wider">
+                        <span className="text-white">{item.label}</span>
+                        <span className={item.color.replace('bg-', 'text-')}>{item.value}%</span>
+                    </div>
+                    {/* Bar Background */}
+                    <div className="h-4 w-full overflow-hidden rounded-full bg-gray-800">
+                        {/* Bar Fill */}
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${item.value}%` }}
+                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 + (i * 0.1) }}
+                            className={`h-full ${item.color} shadow-[0_0_15px_currentColor]`}
+                        />
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">{item.desc}</p>
+                </motion.div>
+            ))}
+        </div>
+      </div>
+
+      {/* RIGHT: Evaluator Mechanism Cards */}
+      <div className="flex flex-1 flex-col justify-center gap-6 border-l border-white/10 pl-8">
+         <h3 className="mb-2 text-xl font-bold text-gray-300 uppercase tracking-widest">
+            Mekanisme <br/> Penilaian
+         </h3>
+
+         {/* Card 1: General Team */}
+         <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+         >
+            <div className="mb-3 flex items-center gap-3">
+                <Users className="h-6 w-6 text-[#ffbe00]" />
+                <h4 className="font-bold text-white">Koordinator & Anggota</h4>
+            </div>
+            <div className="text-sm text-gray-400">
+                <span className="block font-semibold text-gray-200">Evaluator:</span>
+                Steering Committee (SC) + Koordinator Divisi Terkait.
+            </div>
+         </motion.div>
+
+         {/* Card 2: SC Peer Review */}
+         <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="rounded-xl border border-[#ca1f3d]/30 bg-gradient-to-br from-[#ca1f3d]/10 to-transparent p-6 backdrop-blur-sm"
+         >
+            <div className="mb-3 flex items-center gap-3">
+                <Target className="h-6 w-6 text-[#ca1f3d]" />
+                <h4 className="font-bold text-white">Steering Committee</h4>
+            </div>
+            <div className="text-sm text-gray-400">
+                <span className="block font-semibold text-gray-200">Evaluator:</span>
+                <span className="text-[#ffbe00]">Peer Review 360°</span> (Saling menilai antar sesama SC) untuk menjaga objektivitas.
+            </div>
+         </motion.div>
       </div>
     </div>
+  );
+};
 
-    <div className="grid flex-1 grid-cols-3 gap-6">
-        {[
-            { tier: 'TIER 1', role: 'Core Team', icon: <Briefcase/>, val: '40%' },
-            { tier: 'TIER 2', role: 'Field Ops', icon: <Zap/>, val: '35%' },
-            { tier: 'TIER 3', role: 'Support', icon: <Users/>, val: '25%' },
-        ].map((item, i) => (
-            <motion.div 
-                key={i}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: i * 0.2 }}
-                className="group relative flex flex-col justify-end overflow-hidden rounded-2xl bg-gradient-to-t from-[#1a1a1a] to-transparent p-6 border border-white/10"
-            >
-                <div className="absolute inset-0 bg-[#ca1f3d]/10 opacity-0 transition-opacity group-hover:opacity-100" />
-                <div className="mb-4 h-12 w-12 rounded-full bg-white/10 flex items-center justify-center text-white">
-                    {item.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-white">{item.tier}</h3>
-                <p className="text-gray-400">{item.role}</p>
-                <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-gray-800">
-                    <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: item.val }}
-                        transition={{ delay: 0.5 + (i*0.2), duration: 1 }}
-                        className="h-full bg-[#ffbe00]" 
-                    />
-                </div>
-                <span className="mt-2 text-right font-mono text-[#ffbe00]">{item.val}</span>
-            </motion.div>
-        ))}
-    </div>
-  </div>
-);
 
 // SLIDE 4: PEMBAGIAN TUGAS (THE SQUAD)
 const SlideTaskForce = () => {
@@ -356,5 +425,7 @@ export default function PresentationPage() {
     </div>
   );
 }
+
+    
 
     
