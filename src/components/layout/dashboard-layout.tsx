@@ -110,7 +110,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             {navItems.map((item) => {
-              const itemPath = rolePrefix + item.href.replace('/dashboard', ''); // dashboard is the root
+              let itemPath = rolePrefix + item.href.replace('/dashboard', ''); // dashboard is the root
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
               }
