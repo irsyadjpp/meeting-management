@@ -24,6 +24,7 @@ import {
   Bell,
   LogIn,
   LogOut,
+  Presentation,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -41,6 +42,7 @@ import { useGoogleCalendar } from '@/hooks/use-google-calendar';
 const navItems = [
   { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
   { href: '/meeting', icon: Video, label: 'Meetings' },
+  { href: '/decks', icon: Presentation, label: 'Decks' },
   { href: '/team', icon: Users, label: 'Team' },
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
 ];
@@ -120,15 +122,27 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             {navItems.map((item) => {
-              let itemPath = rolePrefix + item.href.replace('/dashboard', ''); // dashboard is the root
+              let itemPath;
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
+              } else if (item.href === '/decks') {
+                 itemPath = rolePrefix + '/meeting'; // Decks are part of meetings
               }
+              else {
+                itemPath = rolePrefix + item.href;
+              }
+
+              // A simple check for active path.
+              // For /decks, we want it to be active when on /meeting pages.
+              const isActive = item.href === '/decks' 
+                ? pathname.startsWith(rolePrefix + '/meeting')
+                : pathname === itemPath;
+
               return(
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                     asChild
-                    isActive={pathname === itemPath}
+                    isActive={isActive}
                     tooltip={item.label}
                   >
                   <Link href={itemPath}>
