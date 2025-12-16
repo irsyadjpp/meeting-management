@@ -39,8 +39,9 @@ interface SlideDeckManagerProps {
   initialSlides?: Slide[];
 }
 
-// --- DATA: DEFAULT SLIDES (Sesuai Presentation Mode) ---
+// --- UPDATED DATA: TACTICAL PLAYBOOK (SOP & NEXT STEPS) ---
 const defaultSlides: Slide[] = [
+  // --- OPENING ---
   {
     id: '1',
     type: 'title',
@@ -48,51 +49,126 @@ const defaultSlides: Slide[] = [
     bullets: ['BCC 2026', 'Integritas & Sportivitas'],
     note: 'PRESS SPACE TO START'
   },
+  
+  // --- SECTION HEADER ---
   {
     id: '2',
-    type: 'content',
-    title: 'Sponsorship Status Board',
-    bullets: [
-      '✅ Bebas Cedera: DEAL (Feedback OK)',
-      '⚠️ Bank BJB: PENDING',
-      '⚠️ Flypower: PENDING',
-      '⛔ Ayo Indonesia: ON HOLD',
-      '🔄 Eiger: RESUBMIT (H-3 Bulan)'
-    ],
-    note: 'Progress 35% Secured. Fokus kawal BJB & Flypower.'
+    type: 'title',
+    title: 'PHASE 1: ACTIVATION',
+    bullets: ['Tactical Orders & SOP', 'Immediate Action Items'],
+    note: 'Jelaskan bahwa ini adalah panduan kerja minggu pertama.'
   },
+
+  // --- ROLE 1: PROJECT DIRECTOR ---
   {
     id: '3',
     type: 'content',
-    title: 'Performance Metrics',
+    title: 'ROLE: PROJECT DIRECTOR (The Captain)',
     bullets: [
-      'Kinerja (35%)',
-      'Struktur (25%)',
-      'Dampak (25%)',
-      'Profesional (15%)'
+      '🎯 TUGAS UTAMA:',
+      '• Menyusun visi strategis & mengambil keputusan final (Veto Rights).',
+      '• Menjadi wajah eksternal (Hubungan ke PBSI, Sponsor Utama, Pemerintah).',
+      '• Mengawasi kinerja Koordinator Bidang.',
+      '',
+      '⚡ NEXT STEPS (SOP MINGGU INI):',
+      '1. [Legal] Tanda tangani SK Panitia Pelaksana & Surat Tugas.',
+      '2. [Ext] Jadwalkan pertemuan "Sowan" ke Pengkot PBSI & KONI.',
+      '3. [Budget] Review & Approve RAB kasar dari Bendahara.',
+      '4. [Tim] Pimpin rapat koordinasi perdana dengan seluruh Koordinator.'
     ],
-    note: 'Evaluator: SC + Peer Review 360°.'
+    note: 'Irsyad: Fokus pada legalitas dan hubungan eksternal dulu.'
   },
+
+  // --- ROLE 2: PENASEHAT ---
   {
     id: '4',
     type: 'content',
-    title: 'Starting Lineup',
+    title: 'ROLE: ADVISOR (The Guardian)',
     bullets: [
-      '👑 Advisor: Aris Indro',
-      '🧢 Director: Irsyad Jamal',
-      '📝 Secretary: Rizki & Annisa',
-      '💰 Finance: Selvi Yulia'
+      '🎯 TUGAS UTAMA:',
+      '• Memberikan pertimbangan strategis & mitigasi risiko.',
+      '• Menjadi mediator jika ada konflik internal (The Judge).',
+      '• Quality Control terhadap keputusan Project Director.',
+      '',
+      '⚡ NEXT STEPS (SOP MINGGU INI):',
+      '1. [Review] Baca & validasi Timeline Kerja Global.',
+      '2. [Risk] Identifikasi potensi masalah (misal: bentrok jadwal GOR).',
+      '3. [Mentor] Sesi 1-on-1 dengan Project Director untuk pematangan visi.'
     ],
-    note: 'Tim Inti / Steering Committee.'
+    note: 'Mas Aris: Pastikan timeline kita realistis.'
   },
+
+  // --- ROLE 3: SEKRETARIS 1 ---
   {
     id: '5',
     type: 'content',
-    title: 'Mission Timeline',
+    title: 'ROLE: SEKRETARIS 1 (Chief of Admin)',
     bullets: [
-      'JAN: Open Registration',
-      'FEB: Sponsorship Run',
+      '🎯 TUGAS UTAMA:',
+      '• Kepala Birokrasi: Legalitas, SK, Proposal, Surat Keluar.',
+      '• Jembatan Komunikasi antar divisi (Traffic Controller).',
+      '• Memimpin jalannya rapat (Agenda Setter).',
+      '',
+      '⚡ NEXT STEPS (SOP MINGGU INI):',
+      '1. [Doc] Finalisasi Draft SK Panitia untuk ditandatangani PD.',
+      '2. [Meet] Buat kalender rapat rutin mingguan (GCalendar).',
+      '3. [Ext] Siapkan draft Surat Permohonan Rekomendasi PBSI.',
+      '4. [Template] Buat template slide & laporan untuk divisi lain.'
+    ],
+    note: 'Rizki: SK harus jadi minggu ini agar tim punya legalitas.'
+  },
+
+  // --- ROLE 4: SEKRETARIS 2 ---
+  {
+    id: '6',
+    type: 'content',
+    title: 'ROLE: SEKRETARIS 2 (Data Ops)',
+    bullets: [
+      '🎯 TUGAS UTAMA:',
+      '• Manajemen Database (Atlet, Sponsor, Volunteer).',
+      '• Notulensi Rapat & Arsip Digital (Google Drive Keeper).',
+      '• Absensi & Tracking Tasks.',
+      '',
+      '⚡ NEXT STEPS (SOP MINGGU INI):',
+      '1. [System] Rapikan struktur folder Google Drive BCC 2026.',
+      '2. [Data] Input data kontak seluruh panitia ke Excel Master.',
+      '3. [MoM] Catat hasil rapat hari ini & share ke grup WhatsApp.',
+      '4. [Log] Buat form absensi untuk rapat-rapat berikutnya.'
+    ],
+    note: 'Annisa: Pastikan tidak ada data yang tercecer.'
+  },
+
+  // --- ROLE 5: BENDAHARA ---
+  {
+    id: '7',
+    type: 'content',
+    title: 'ROLE: BENDAHARA (The Vault)',
+    bullets: [
+      '🎯 TUGAS UTAMA:',
+      '• Gatekeeper Keuangan (Keluar/Masuk).',
+      '• Menyusun RAB (Rencana Anggaran Biaya).',
+      '• Membuat Laporan Keuangan (LPJ) transparan.',
+      '',
+      '⚡ NEXT STEPS (SOP MINGGU INI):',
+      '1. [Plan] Susun Draft RAB Global (Estimasi Pemasukan vs Pengeluaran).',
+      '2. [Account] Buka rekening khusus kepanitiaan (atau tunjuk rekening penampung).',
+      '3. [Flow] Buat SOP Reimbursement & Pengajuan Dana untuk divisi.',
+      '4. [Sponsor] Koordinasi dengan Tim Komersial untuk target dana masuk.'
+    ],
+    note: 'Selvi: RAB harus realistis, jangan sampai boncos.'
+  },
+
+  // --- CLOSING ---
+  {
+    id: '8',
+    type: 'content',
+    title: 'MISSION TIMELINE',
+    bullets: [
+      'JAN: Open Registration & Sounding',
+      'FEB: Sponsorship Roadshow',
       'MAR: Registration Closed',
+      'APR: Roster Lock',
+      'MEI: Technical Meeting',
       'JUN-JUL: MAIN EVENT 🏆'
     ],
     note: 'Roadmap menuju puncak acara.'
@@ -256,7 +332,7 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
 
           <Button 
             onClick={startPresentation}
-            className="h-10 rounded-full bg-[#ca1f3d] px-6 font-bold text-white hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_20px_rgba(202,31,61,0.5)]"
+            className="h-10 rounded-full bg-[#ca1f3d] px-6 font-bold text-white hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_20px_rgba(202,31,61,0.4)]"
           >
             <Play className="mr-2 h-4 w-4 fill-current" />
             LIVE MODE
