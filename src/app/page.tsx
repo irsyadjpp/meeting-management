@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
 import { LoginScreen } from '@/components/auth/login-screen';
