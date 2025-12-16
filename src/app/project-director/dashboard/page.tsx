@@ -1,3 +1,4 @@
+
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { UpcomingMeeting } from "@/components/dashboard/upcoming-meeting";
 import { QuickActions } from "@/components/dashboard/quick-actions";

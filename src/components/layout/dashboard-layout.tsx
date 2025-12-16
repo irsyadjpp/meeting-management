@@ -126,16 +126,16 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
               } else if (item.href === '/decks') {
-                 itemPath = '/meeting/1'; // Point to the specific meeting with slides
+                 itemPath = '/meeting/1/edit-slides'; // Point to the specific meeting with slides
               }
               else {
-                itemPath = rolePrefix + item.href;
+                itemPath = item.href;
               }
 
               // A simple check for active path.
               // For /decks, we want it to be active when on /meeting pages.
               const isActive = item.href === '/decks' 
-                ? pathname.startsWith('/meeting')
+                ? pathname.includes('/edit-slides') || pathname.startsWith('/meeting')
                 : pathname === itemPath;
 
               return(
@@ -172,8 +172,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <Header />
-        <main className="flex-1 overflow-auto">{children}</main>
+        <div className='flex flex-col h-screen'>
+            {/* The header is now part of individual pages that need it */}
+            <main className="flex-1 overflow-auto">{children}</main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
