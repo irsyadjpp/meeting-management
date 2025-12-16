@@ -126,7 +126,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
               } else if (item.href === '/decks') {
-                 itemPath = rolePrefix + '/meeting'; // Decks are part of meetings
+                 itemPath = '/meeting/1'; // Point to the specific meeting with slides
               }
               else {
                 itemPath = rolePrefix + item.href;
@@ -135,7 +135,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               // A simple check for active path.
               // For /decks, we want it to be active when on /meeting pages.
               const isActive = item.href === '/decks' 
-                ? pathname.startsWith(rolePrefix + '/meeting')
+                ? pathname.startsWith('/meeting')
                 : pathname === itemPath;
 
               return(
