@@ -56,46 +56,76 @@ const SlideKickOff = () => (
   </div>
 );
 
-// SLIDE 2: SPONSORSHIP (THE SCOREBOARD)
-const SlideSponsorship = () => (
-  <div className="grid h-full w-full grid-cols-1 gap-8 p-12 md:grid-cols-2">
-    {/* Kiri: Progress */}
-    <div className="flex flex-col justify-center gap-6">
-      <h2 className="text-5xl font-black text-white uppercase">Sponsor <br/><span className="text-[#ca1f3d]">Secured</span></h2>
-      <div className="relative h-64 w-64">
-        <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 100 100">
-          <circle className="text-gray-800" strokeWidth="10" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
-          <motion.circle 
-            initial={{ pathLength: 0 }} 
-            animate={{ pathLength: 0.85 }} 
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            className="text-[#ffbe00]" strokeWidth="10" strokeLinecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" 
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-5xl font-bold text-white">85%</span>
+// SLIDE 2: SPONSORSHIP (THE SCOREBOARD) - REVISED
+const SlideSponsorship = () => {
+  const sponsors = [
+    { name: 'BEBAS CEDERA', status: 'DEAL', note: 'Feedback OK', color: 'bg-green-500', textColor: 'text-green-400' },
+    { name: 'BANK BJB', status: 'PENDING', note: 'Menunggu Konfirmasi', color: 'bg-yellow-500', textColor: 'text-yellow-400' },
+    { name: 'FLYPOWER', status: 'PENDING', note: 'Proposal Terkirim', color: 'bg-yellow-500', textColor: 'text-yellow-400' },
+    { name: 'AYO INDONESIA', status: 'ON HOLD', note: 'Ditunda Sementara', color: 'bg-red-500', textColor: 'text-red-400' },
+    { name: 'EIGER', status: 'RESUBMIT', note: 'Ajukan H-3/H-1 Bulan', color: 'bg-blue-500', textColor: 'text-blue-400' },
+  ];
+
+  return (
+    <div className="grid h-full w-full grid-cols-1 gap-8 p-12 md:grid-cols-2">
+      {/* Kiri: Progress & Summary */}
+      <div className="flex flex-col justify-center gap-6">
+        <h2 className="text-5xl font-black text-white uppercase leading-tight">
+          Sponsorship <br/><span className="text-[#ca1f3d]">Status Board</span>
+        </h2>
+        
+        <div className="flex items-center gap-6">
+            <div className="relative h-48 w-48 shrink-0">
+            <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 100 100">
+                <circle className="text-gray-800" strokeWidth="10" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                {/* Visualisasi progress kasar berdasarkan jumlah Deal/Pending */}
+                <motion.circle 
+                initial={{ pathLength: 0 }} 
+                animate={{ pathLength: 0.35 }} 
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className="text-[#ffbe00]" strokeWidth="10" strokeLinecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" 
+                />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-4xl font-bold text-white">35%</span>
+                <span className="text-[10px] text-gray-400 uppercase">Secured</span>
+            </div>
+            </div>
+            <p className="text-lg text-gray-400">
+                <span className="text-white font-bold">Bebas Cedera</span> sudah lock deal. Fokus kawal <span className="text-[#ffbe00]">BJB & Flypower</span> minggu ini.
+            </p>
         </div>
       </div>
-      <p className="text-xl text-gray-400">Target pendanaan hampir tercapai. Fokus pada closing 2 sponsor besar.</p>
-    </div>
 
-    {/* Kanan: Logo Grid */}
-    <div className="grid grid-cols-2 gap-4 content-center">
-      {['BANK BJB', 'AYO INDONESIA', 'YONEX', 'POCARI SWEAT'].map((sponsor, idx) => (
-        <motion.div 
-          key={sponsor}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: idx * 0.2 }}
-          className="flex h-32 items-center justify-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm"
-        >
-          <span className="text-xl font-bold text-white/80">{sponsor}</span>
-          {idx < 2 && <CheckCircle className="ml-2 h-5 w-5 text-[#ffbe00]" />}
-        </motion.div>
-      ))}
+      {/* Kanan: Sponsor List Grid */}
+      <div className="flex flex-col justify-center gap-3">
+        {sponsors.map((item, idx) => (
+          <motion.div 
+            key={item.name}
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: idx * 0.1 }}
+            className="group flex items-center justify-between rounded-lg border border-white/5 bg-white/5 p-4 hover:bg-white/10"
+          >
+            {/* Nama Sponsor */}
+            <div className="flex items-center gap-4">
+                <div className={`h-2 w-2 rounded-full ${item.color} shadow-[0_0_10px_currentColor]`} />
+                <div>
+                    <h3 className="text-xl font-bold text-white tracking-wide">{item.name}</h3>
+                    <p className="text-xs text-gray-400">{item.note}</p>
+                </div>
+            </div>
+
+            {/* Status Badge */}
+            <Badge variant="outline" className={`border-none ${item.color}/20 ${item.textColor} font-mono text-xs uppercase tracking-widest`}>
+                {item.status}
+            </Badge>
+          </motion.div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // SLIDE 3: BUDGETING (THE FUEL GAUGE)
 const SlideBudgeting = () => (
@@ -326,3 +356,5 @@ export default function PresentationPage() {
     </div>
   );
 }
+
+    
