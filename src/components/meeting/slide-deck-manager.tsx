@@ -9,17 +9,17 @@ import {
   MoreVertical, 
   Image as ImageIcon, 
   Type, 
-  Layout,
-  Save,
-  Menu
+  // Layout, // Unused import removed
+  // Save, // Unused import removed
+  // Menu // Unused import removed
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+// import { Card } from '@/components/ui/card'; // Unused import removed
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { PresentationOverlay } from './presentation-overlay';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+// Removed PresentationOverlay import
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -66,22 +66,22 @@ const defaultSlides: Slide[] = [
 
 export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: SlideDeckManagerProps) {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
-  const [isPresenting, setIsPresenting] = useState(false);
+  // Removed isPresenting state since we are navigating to a new page
   const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
-  // Keyboard shortcut untuk presentasi
+  // Keyboard shortcut F5 untuk pindah ke halaman presentasi
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'F5') {
         e.preventDefault();
-        setIsPresenting(true);
+        router.push(`/meeting/${meetingId}/presentation`);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [meetingId, router]);
 
   const handleUpdateSlide = (updatedSlide: Slide) => {
     setSlides(slides.map(s => s.id === updatedSlide.id ? updatedSlide : s));
@@ -96,6 +96,11 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
     };
     setSlides([...slides, newSlide]);
     setEditingSlide(newSlide);
+  };
+
+  const startPresentation = () => {
+    // Navigasi ke halaman Presentation Page yang baru dibuat
+    router.push(`/meeting/${meetingId}/presentation`);
   };
 
   return (
@@ -122,7 +127,7 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
             {slides.length} Slides
            </span>
           <Button 
-            onClick={() => setIsPresenting(true)}
+            onClick={startPresentation}
             className="rounded-full bg-[#ca1f3d] font-bold text-[#ffbe00] hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_15px_rgba(202,31,61,0.5)]"
           >
             <Play className="mr-2 h-4 w-4 fill-current" />
@@ -270,16 +275,8 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
             )}
         </SheetContent>
       </Sheet>
-
-      {/* --- PRESENTATION OVERLAY --- */}
-      <AnimatePresence>
-        {isPresenting && (
-            <PresentationOverlay 
-                slides={slides} 
-                onExit={() => setIsPresenting(false)} 
-            />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
+
+    
