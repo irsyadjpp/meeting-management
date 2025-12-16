@@ -1,6 +1,6 @@
 
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import { useToast } from './use-toast';
 
 // Mock user data
@@ -32,21 +32,34 @@ type User = {
     role: string;
 } | null;
 
+interface GoogleCalendarContextType {
+    isAuthenticated: boolean;
+    user: User;
+    login: () => void;
+    logout: () => void;
+    createEvent: (eventData: any) => Promise<string>;
+    loginAsDirector: () => void;
+    loginAsStaff: () => void;
+}
 
-// This is a mock hook to simulate Google Calendar API interaction.
-// In a real application, this would use a library like 'gapi-script' or '@react-oauth/google'.
-export function useGoogleCalendar() {
+const GoogleCalendarContext = createContext<GoogleCalendarContextType | undefined>(undefined);
+
+export function GoogleCalendarProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check local storage to maintain "logged in" state across page reloads
     const storedAuth = localStorage.getItem('bcc-auth-mock');
     if (storedAuth) {
-      const authUser = JSON.parse(storedAuth);
-      setIsAuthenticated(true);
-      setUser(authUser);
+      try {
+        const authUser = JSON.parse(storedAuth);
+        setIsAuthenticated(true);
+        setUser(authUser);
+      } catch (error) {
+        console.error("Failed to parse auth data from localStorage", error);
+        localStorage.removeItem('bcc-auth-mock');
+      }
     }
   }, []);
 
@@ -104,5 +117,19 @@ export function useGoogleCalendar() {
     });
   };
 
-  return { isAuthenticated, user, login, logout, createEvent, loginAsDirector, loginAsStaff };
+  const value = { isAuthenticated, user, login, logout, createEvent, loginAsDirector, loginAsStaff };
+
+  return (
+    <GoogleCalendarContext.Provider value={value}>
+      {children}
+    </GoogleCalendarContext.Provider>
+  );
+}
+
+export function useGoogleCalendar() {
+    const context = useContext(GoogleCalendarContext);
+    if(context === undefined) {
+        throw new Error('useGoogleCalendar must be used within a GoogleCalendarProvider');
+    }
+    return context;
 }

@@ -37,10 +37,11 @@ import {
 } from '../ui/dropdown-menu';
 import { useState, useEffect } from 'react';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
+import { LoginScreen } from '@/components/auth/login-screen';
 
 const navItems = [
   { href: '/', icon: LayoutGrid, label: 'Dashboard' },
-  { href: '/meetings', icon: Video, label: 'Meetings' },
+  { href: '/meeting', icon: Video, label: 'Meetings' },
   { href: '/team', icon: Users, label: 'Team' },
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
 ];
@@ -98,10 +99,19 @@ function Header() {
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
+  const { isAuthenticated } = useGoogleCalendar();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  if (!isClient) {
+    return null; // Or a loading spinner
+  }
+
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
 
   return (
     <SidebarProvider>
@@ -146,7 +156,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       </Sidebar>
       <SidebarInset>
         {isClient ? <Header /> : <div className="h-16 border-b" />}
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

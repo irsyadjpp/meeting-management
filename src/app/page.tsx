@@ -18,7 +18,7 @@ export default function Home() {
           <UpcomingMeeting />
         </div>
         <div className="lg:col-span-1 xl:col-span-1 row-span-2">
-          <CalendarWidget />
+           <QuickActions />
         </div>
         <div className="lg:col-span-2 xl:col-span-3">
           <MeetingList />
