@@ -11,8 +11,9 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated && user) {
-      const role = user.role.toLowerCase().replace(/ /g, '-');
-      router.replace(`/${role}/dashboard`);
+      // Normalize role to create a path, e.g., "Project Director" -> "project-director"
+      const rolePath = user.role.toLowerCase().replace(/\s+/g, '-');
+      router.replace(`/${rolePath}/dashboard`);
     }
   }, [isAuthenticated, isAuthLoading, user, router]);
 
@@ -26,7 +27,7 @@ export default function HomePage() {
   }
   
   if (!isAuthenticated) {
-    return <LoginScreen onLogin={login} onLoginAsDirector={loginAsDirector} onLoginAsStaff={loginAsStaff} />;
+    return <LoginScreen onGoogleLogin={login} onLoginAsDirector={loginAsDirector} onLoginAsStaff={loginAsStaff} />;
   }
 
   // This will be shown briefly while redirecting after login
@@ -36,3 +37,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
