@@ -2,15 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { meetings } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
-import { Button } from "../ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 
 export function MeetingList() {
   return (
     <Card className="glassmorphic h-full flex flex-col">
       <CardHeader>
-        <CardTitle>Meetings</CardTitle>
+        <CardTitle>Meeting Log</CardTitle>
         <CardDescription>A log of your recent and upcoming meetings.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -19,14 +18,23 @@ export function MeetingList() {
             <Link key={meeting.id} href={`/meeting/${meeting.id}`} className="block p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="font-medium">{meeting.title}</p>
+                  <div className="flex items-center gap-2">
+                    {meeting.isSyncedToGoogle && <CheckCircle className="h-4 w-4 text-green-400" />}
+                    <p className="font-medium">{meeting.title}</p>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {format(meeting.date, 'MMM d, yyyy')} - {meeting.startTime}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Badge variant={meeting.status === 'Completed' ? 'secondary' : 'default'}
-                         className={meeting.status === 'Upcoming' ? 'bg-accent text-accent-foreground' : ''}>
+                  <Badge 
+                    variant={meeting.status === 'Completed' ? 'secondary' : 'default'}
+                    className={
+                        meeting.status === 'Upcoming' ? 'bg-accent text-accent-foreground' 
+                        : meeting.status === 'Live' ? 'bg-primary text-primary-foreground'
+                        : ''
+                    }
+                  >
                     {meeting.status}
                   </Badge>
                   <ArrowRight className="h-4 w-4 text-muted-foreground" />

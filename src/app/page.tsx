@@ -2,6 +2,7 @@ import { UpcomingMeeting } from "@/components/dashboard/upcoming-meeting";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { TeamCarousel } from "@/components/dashboard/team-carousel";
 import { MeetingList } from "@/components/dashboard/meeting-list";
+import { CalendarWidget } from "@/components/dashboard/calendar-widget";
 
 export default function Home() {
   return (
@@ -16,14 +17,14 @@ export default function Home() {
         <div className="lg:col-span-2 xl:col-span-3">
           <UpcomingMeeting />
         </div>
-        <div className="lg:col-span-1 xl:col-span-1">
-          <QuickActions />
+        <div className="lg:col-span-1 xl:col-span-1 row-span-2">
+          <CalendarWidget />
         </div>
-        <div className="lg:col-span-3 xl:col-span-2">
+        <div className="lg:col-span-2 xl:col-span-3">
           <MeetingList />
         </div>
-        <div className="lg:col-span-3 xl:col-span-2">
-          <TeamCarousel />
+        <div className="lg:col-span-3 xl:col-span-4">
+           <TeamCarousel />
         </div>
       </div>
     </div>

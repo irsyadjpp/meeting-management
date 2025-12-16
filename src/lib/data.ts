@@ -4,11 +4,13 @@ import { PlaceHolderImages } from './placeholder-images';
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
 
 export const teamMembers = [
-  { id: 1, name: 'Alex Johnson', role: 'Project Manager', avatar: findImage('avatar1') },
-  { id: 2, name: 'Maria Garcia', role: 'Lead Designer', avatar: findImage('avatar2') },
-  { id: 3, name: 'James Smith', role: 'Lead Developer', avatar: findImage('avatar3') },
-  { id: 4, name: 'Patricia Williams', role: 'QA Engineer', avatar: findImage('avatar4') },
-  { id: 5, name: 'Robert Brown', role: 'DevOps Specialist', avatar: findImage('avatar5') },
+  { id: 1, name: 'Irsyad Jamal Pratama Putra', role: 'Project Director', avatar: findImage('avatar1') },
+  { id: 2, name: 'Aris Indro', role: 'Advisor', avatar: findImage('avatar2') },
+  { id: 3, name: 'Rizki Karami', role: 'Sekretaris 1 (Strategic)', avatar: findImage('avatar3') },
+  { id: 4, name: 'Annisa Syafira', role: 'Sekretaris 2 (Ops)', avatar: findImage('avatar4') },
+  { id: 5, name: 'Selvi Yulia', role: 'Bendahara', avatar: findImage('avatar5') },
+  { id: 6, name: 'Maria Garcia', role: 'Lead Designer', avatar: findImage('avatar2') },
+  { id: 7, name: 'James Smith', role: 'Lead Developer', avatar: findImage('avatar3') },
 ];
 
 export const steeringCommittee = [
@@ -75,19 +77,21 @@ export const divisions = [
 export const meetings = [
   {
     id: '1',
-    title: 'Project Phoenix: Q3 Kick-off',
-    date: new Date(new Date().setDate(new Date().getDate() + 2)),
+    title: 'Rapat Koordinasi: Persiapan BCC 2026',
+    date: new Date(),
     startTime: '10:00 AM',
     endTime: '11:30 AM',
-    attendees: teamMembers,
-    status: 'Upcoming',
+    attendees: steeringCommittee.map((m, i) => ({ ...m, id: i+1 })),
+    status: 'Live',
     agenda: [
-      'Review of Q2 Performance (15 min)',
-      'Introduction to Q3 Goals (20 min)',
-      'Sprint 1 Planning & Task Division (30 min)',
-      'Open Floor for Q&A (15 min)',
+      'Finalisasi Visi & Misi Acara (15 min)',
+      'Pembahasan Anggaran & Sponsor Utama (20 min)',
+      'Penetapan Koordinator Divisi (30 min)',
+      'Q&A dan Langkah Selanjutnya (15 min)',
     ],
     minutes: null,
+    isSyncedToGoogle: true,
+    googleMeetLink: 'https://meet.google.com/bcc-2026-meet',
   },
   {
     id: '2',
@@ -97,17 +101,21 @@ export const meetings = [
     endTime: '3:00 PM',
     attendees: [teamMembers[1], teamMembers[0]],
     status: 'Completed',
-    minutes: `**Summary:**\nThe team reviewed the new user onboarding flow. Maria presented wireframes, and Alex provided feedback on scope alignment.\n\n**Decisions:**\n- Proceed with Option B for the welcome screen.\n- A/B test the tutorial placement.\n\n**Action Items:**\n- [ACTION] @Maria to finalize high-fidelity mockups by EOD Friday.\n- [ ] @Alex to prepare the product spec for the new flow.`
+    minutes: `**Summary:**\nThe team reviewed the new user onboarding flow. Maria presented wireframes, and Alex provided feedback on scope alignment.\n\n**Decisions:**\n- Proceed with Option B for the welcome screen.\n- A/B test the tutorial placement.\n\n**Action Items:**\n- [ACTION] @Maria to finalize high-fidelity mockups by EOD Friday.\n- [ ] @Alex to prepare the product spec for the new flow.`,
+    isSyncedToGoogle: false,
+    googleMeetLink: null,
   },
   {
     id: '3',
     title: 'Development Stand-up',
-    date: new Date(),
+    date: new Date(new Date().setDate(new Date().getDate() + 1)),
     startTime: '9:00 AM',
     endTime: '9:15 AM',
     attendees: [teamMembers[2], teamMembers[3], teamMembers[4]],
-    status: 'Completed',
-    minutes: 'Quick updates from everyone. No blockers reported.'
+    status: 'Upcoming',
+    minutes: 'Quick updates from everyone. No blockers reported.',
+    isSyncedToGoogle: false,
+    googleMeetLink: null,
   },
     {
     id: '4',
@@ -122,7 +130,9 @@ export const meetings = [
         'Budget allocation (30 min)',
         'Next steps (15 min)'
     ],
-    minutes: null
+    minutes: null,
+    isSyncedToGoogle: false,
+    googleMeetLink: null,
   },
 ];
 
