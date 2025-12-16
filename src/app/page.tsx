@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
 import { LoginScreen } from '@/components/auth/login-screen';
 
 export default function HomePage() {
-  const { isAuthenticated, isAuthLoading, user } = useGoogleCalendar();
+  const { isAuthenticated, isAuthLoading, user, login, loginAsDirector, loginAsStaff } = useGoogleCalendar();
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function HomePage() {
   }
   
   if (!isAuthenticated) {
-    return <LoginScreen />;
+    return <LoginScreen onLogin={login} onLoginAsDirector={loginAsDirector} onLoginAsStaff={loginAsStaff} />;
   }
 
   // This will be shown briefly while redirecting after login

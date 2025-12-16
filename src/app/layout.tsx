@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { GoogleCalendarProvider } from '@/hooks/use-google-calendar';
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
 
 export const metadata: Metadata = {
   title: 'BCC Meeting Management',
@@ -23,9 +22,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <GoogleCalendarProvider>
-            <DashboardLayout>
-                {children}
-            </DashboardLayout>
+            {children}
             <Toaster />
         </GoogleCalendarProvider>
       </body>

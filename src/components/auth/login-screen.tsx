@@ -1,11 +1,16 @@
+'use client';
 
-"use client";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useGoogleCalendar } from "@/hooks/use-google-calendar";
-import { Award, Dribbble, Shield } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Trophy, Shield, Zap, ArrowRight, Layout } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+// Definisikan tipe props
+interface LoginScreenProps {
+  onLogin: () => void;
+  onLoginAsDirector: () => void;
+  onLoginAsStaff: () => void;
+}
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -28,106 +33,129 @@ const GoogleIcon = () => (
     </svg>
   );
 
-const FloatingIcon = ({ icon, className }: {icon: React.ElementType, className?: string}) => {
-    const Icon = icon;
-    return (
-        <motion.div
-            className={`absolute text-yellow-300/70 ${className}`}
-            animate={{
-                y: [0, -10, 0, 10, 0],
-                rotate: [0, 5, 0, -5, 0],
-            }}
-            transition={{
-                duration: 10,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "loop",
-            }}
-            style={{ textShadow: '0 0 15px rgba(255, 190, 0, 0.5)' }}
-        >
-            <Icon size={48} strokeWidth={1} />
-        </motion.div>
-    );
-};
+export function LoginScreen({ onLogin, onLoginAsDirector, onLoginAsStaff }: LoginScreenProps) {
+  const [isLoading, setIsLoading] = useState(false);
 
-export function LoginScreen() {
-    const { login, loginAsDirector, loginAsStaff } = useGoogleCalendar();
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
+    onLogin();
+  };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#121212] p-4 text-white overflow-hidden">
-        {/* Animated Mesh Gradient Background */}
-        <div className="absolute inset-0 z-0 opacity-30">
-            <div className="absolute h-96 w-96 rounded-full bg-[#ca1f3d] blur-3xl filter animate-[spin_20s_linear_infinite]" style={{top: '10%', left: '20%'}}></div>
-            <div className="absolute h-96 w-96 rounded-full bg-[#ffbe00] blur-3xl filter animate-[spin_25s_linear_infinite_reverse]" style={{bottom: '10%', right: '20%'}}></div>
-        </div>
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#050505] font-sans selection:bg-[#ffbe00] selection:text-black">
+      
+      {/* Background Gradients */}
+      <div className="absolute left-[-10%] top-[-10%] h-[500px] w-[500px] rounded-full bg-[#ca1f3d]/20 blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-[#ffbe00]/10 blur-[120px]" />
+
+      <div className="z-10 grid w-full max-w-6xl grid-cols-1 gap-12 px-6 lg:grid-cols-2">
         
-        {/* Floating Icons */}
-        <FloatingIcon icon={Dribbble} className="top-1/4 left-1/4" />
-        <FloatingIcon icon={Award} className="bottom-1/3 right-1/4" />
-        <FloatingIcon icon={Shield} className="top-1/2 right-1/3" />
+        {/* Left Side: Brand Typography */}
+        <div className="flex flex-col justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#ca1f3d] to-[#ffbe00] shadow-lg shadow-red-900/20">
+                <Trophy className="h-5 w-5 text-white" />
+              </div>
+              <span className="font-mono text-sm font-bold tracking-[0.2em] text-[#ffbe00]">
+                BCC 2026 SYSTEM
+              </span>
+            </div>
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center w-full max-w-6xl">
-            {/* Left/Top Section */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center md:text-left"
-            >
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
-                    BCC MEETING
-                    <br />
-                    MANAGEMENT
-                </h1>
-                <p className="mt-4 font-mono text-lg text-yellow-300">
-                    System Status: <span className="animate-pulse">ONLINE</span>
-                </p>
-            </motion.div>
+            <h1 className="text-5xl font-black leading-tight tracking-tighter text-white md:text-7xl">
+              COMMAND <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]">
+                CENTER
+              </span>
+            </h1>
+            
+            <p className="mt-6 max-w-md text-lg text-gray-400">
+              Platform manajemen turnamen terintegrasi. <br/>
+              Integritas, Solidaritas, & Sportivitas.
+            </p>
 
-            {/* Right/Bottom Section */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            >
-                <Card className="glassmorphic w-full max-w-md mx-auto" style={{borderRadius: '32px'}}>
-                    <CardHeader>
-                        <CardTitle className="text-3xl font-semibold">Welcome Back, Champion.</CardTitle>
-                        <CardDescription>Access the committee dashboard to continue your mission.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Button
-                                size="lg"
-                                className="w-full bg-white text-black h-14 text-lg font-semibold rounded-2xl shadow-lg shadow-white/10 hover:bg-gray-100"
-                                onClick={login}
-                            >
-                                <GoogleIcon />
-                                Sign in with Google
-                            </Button>
-                        </motion.div>
-
-                        <div className="flex items-center gap-4">
-                            <Separator className="flex-1 bg-white/20"/>
-                            <span className="text-xs font-mono text-muted-foreground">OR (DEV MODE)</span>
-                            <Separator className="flex-1 bg-white/20"/>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <Button variant="outline" className="rounded-xl" onClick={loginAsDirector}>
-                                Login as Director
-                            </Button>
-                            <Button variant="outline" className="rounded-xl" onClick={loginAsStaff}>
-                                Login as Staff
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-            </motion.div>
+            <div className="mt-8 flex items-center gap-4 text-sm font-mono text-gray-500">
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                SYSTEM ONLINE
+              </span>
+              <span>v1.0.0-beta</span>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Right Side: Login Card */}
+        <div className="flex items-center justify-center lg:justify-end">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="relative w-full max-w-md overflow-hidden rounded-[32px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl shadow-2xl"
+          >
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold text-white">Welcome Back, Champion.</h2>
+              <p className="text-sm text-gray-400">Access the committee dashboard.</p>
+            </div>
+
+            {/* Google Login */}
+            <Button
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+              className="group relative w-full h-14 rounded-full bg-white hover:bg-gray-100 text-black font-bold text-base transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+            >
+              {isLoading ? (
+                <span className="animate-pulse">Connecting...</span>
+              ) : (
+                <div className="flex items-center justify-center gap-3">
+                   <GoogleIcon />
+                  Sign in with Google
+                </div>
+              )}
+            </Button>
+
+            {/* Divider */}
+            <div className="relative my-8">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-white/10" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-[#0f0f0f] px-2 text-muted-foreground font-mono">
+                  Or (Dev Mode Bypass)
+                </span>
+              </div>
+            </div>
+
+            {/* Dev Buttons */}
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                variant="outline"
+                onClick={onLoginAsDirector}
+                className="h-12 border-white/10 bg-white/5 hover:bg-[#ffbe00]/10 hover:text-[#ffbe00] hover:border-[#ffbe00]/50 transition-all group"
+              >
+                <Shield className="mr-2 h-4 w-4 text-gray-400 group-hover:text-[#ffbe00]" />
+                Director
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onLoginAsStaff}
+                className="h-12 border-white/10 bg-white/5 hover:bg-[#ca1f3d]/10 hover:text-[#ca1f3d] hover:border-[#ca1f3d]/50 transition-all group"
+              >
+                <Layout className="mr-2 h-4 w-4 text-gray-400 group-hover:text-[#ca1f3d]" />
+                Staff
+              </Button>
+            </div>
+
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
