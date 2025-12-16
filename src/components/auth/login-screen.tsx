@@ -75,9 +75,9 @@ export function LoginScreen() {
                 className="text-center md:text-left"
             >
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
-                    BCC 2026
+                    BCC MEETING
                     <br />
-                    COMMAND CENTER
+                    MANAGEMENT
                 </h1>
                 <p className="mt-4 font-mono text-lg text-yellow-300">
                     System Status: <span className="animate-pulse">ONLINE</span>
