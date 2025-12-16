@@ -5,18 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Agenda } from "@/components/meeting/agenda";
 import { Attendees } from "@/components/meeting/attendees";
 import { MoMEditor } from "@/components/meeting/mom-editor";
-import { Calendar, Clock, Users, Video, CheckCircle } from "lucide-react";
+import { Calendar, Clock, Users, Video, CheckCircle, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { SlideDeckManager } from "@/components/meeting/slide-deck-manager";
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 type MeetingPageProps = {
   params: { id: string };
 };
 
-export default function MeetingPage({ params }: MeetingPageProps) {
+export default function MeetingDetailPage({ params }: MeetingPageProps) {
   const meeting = getMeetingById(params.id);
 
   if (!meeting) {
@@ -26,7 +25,15 @@ export default function MeetingPage({ params }: MeetingPageProps) {
   const isLive = meeting.status === "Live";
 
   return (
-    <DashboardLayout>
+    <>
+      <header className="sticky top-0 z-10 glassmorphic flex items-center justify-between h-16 px-4 sm:px-6 border-b">
+        <Button asChild variant="ghost">
+          <Link href="/meeting">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to All Meetings
+          </Link>
+        </Button>
+      </header>
       <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{meeting.title}</h1>
@@ -75,6 +82,8 @@ export default function MeetingPage({ params }: MeetingPageProps) {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 }
+
+    

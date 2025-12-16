@@ -126,16 +126,15 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
               } else if (item.href === '/decks') {
-                 itemPath = '/meeting/1/edit-slides'; // Point to the specific meeting with slides
+                 // For now, decks will point to the general meeting list
+                 itemPath = '/meeting';
               }
               else {
                 itemPath = item.href;
               }
-
-              // A simple check for active path.
-              // For /decks, we want it to be active when on /meeting pages.
-              const isActive = item.href === '/decks' 
-                ? pathname.includes('/edit-slides') || pathname.startsWith('/meeting')
+              
+              const isActive = (item.href === '/decks' || item.href === '/meeting')
+                ? pathname.startsWith('/meeting')
                 : pathname === itemPath;
 
               return(
@@ -180,3 +179,5 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     </SidebarProvider>
   );
 }
+
+    
