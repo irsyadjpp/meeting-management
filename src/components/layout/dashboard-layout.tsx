@@ -47,6 +47,16 @@ const navItems = [
 
 function Header() {
   const { isAuthenticated, user, login, logout } = useGoogleCalendar();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <header className="h-16 px-4 sm:px-6 lg:px-8 border-b" />;
+  }
+  
   return (
     <header className="flex items-center justify-end h-16 px-4 sm:px-6 lg:px-8 border-b">
       <div className="flex items-center gap-4">
@@ -99,7 +109,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user } = useGoogleCalendar();
 
-  const rolePrefix = user?.role ? `/${user.role.toLowerCase().replace(' ', '-')}` : '';
+  const rolePrefix = user?.role ? `/${user.role.toLowerCase().replace(/ /g, '-')}` : '';
 
   return (
     <SidebarProvider>
