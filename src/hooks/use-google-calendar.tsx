@@ -34,6 +34,7 @@ type User = {
 
 interface GoogleCalendarContextType {
     isAuthenticated: boolean;
+    isAuthLoading: boolean;
     user: User;
     login: () => void;
     logout: () => void;
@@ -46,20 +47,23 @@ const GoogleCalendarContext = createContext<GoogleCalendarContextType | undefine
 
 export function GoogleCalendarProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [user, setUser] = useState<User>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    const storedAuth = localStorage.getItem('bcc-auth-mock');
-    if (storedAuth) {
-      try {
+    try {
+      const storedAuth = localStorage.getItem('bcc-auth-mock');
+      if (storedAuth) {
         const authUser = JSON.parse(storedAuth);
         setIsAuthenticated(true);
         setUser(authUser);
-      } catch (error) {
-        console.error("Failed to parse auth data from localStorage", error);
-        localStorage.removeItem('bcc-auth-mock');
       }
+    } catch (error) {
+      console.error("Failed to parse auth data from localStorage", error);
+      localStorage.removeItem('bcc-auth-mock');
+    } finally {
+        setIsAuthLoading(false);
     }
   }, []);
 
@@ -98,6 +102,8 @@ export function GoogleCalendarProvider({ children }: { children: ReactNode }) {
         title: 'Signed Out',
         description: 'You have been signed out.',
       });
+      // Force a reload to ensure clean state
+      window.location.href = '/';
     }, 500);
   };
   
@@ -121,7 +127,7 @@ export function GoogleCalendarProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const value = { isAuthenticated, user, login, logout, createEvent, loginAsDirector, loginAsStaff };
+  const value = { isAuthenticated, isAuthLoading, user, login, logout, createEvent, loginAsDirector, loginAsStaff };
 
   return (
     <GoogleCalendarContext.Provider value={value}>

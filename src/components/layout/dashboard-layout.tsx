@@ -39,26 +39,9 @@ import {
 import { useState, useEffect } from 'react';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
 
-const navItems = [
-  { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
-  { href: '/meeting', icon: Video, label: 'Meetings' },
-  { href: '/decks', icon: Presentation, label: 'Decks' },
-  { href: '/team', icon: Users, label: 'Team' },
-  { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
-];
-
 function Header() {
   const { isAuthenticated, user, login, logout } = useGoogleCalendar();
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return <header className="h-16 px-4 sm:px-6 lg:px-8 border-b" />;
-  }
-  
   return (
     <header className="flex items-center justify-end h-16 px-4 sm:px-6 lg:px-8 border-b">
       <div className="flex items-center gap-4">
@@ -111,6 +94,14 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user } = useGoogleCalendar();
 
+  const navItems = [
+    { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+    { href: '/meeting', icon: Video, label: 'Meetings' },
+    { href: '/decks', icon: Presentation, label: 'Decks' },
+    { href: '/team', icon: Users, label: 'Team' },
+    { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
+  ];
+
   const rolePrefix = user?.role ? `/${user.role.toLowerCase().replace(/ /g, '-')}` : '';
 
   return (
@@ -126,16 +117,17 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               if (item.href === '/dashboard') {
                  itemPath = rolePrefix + '/dashboard';
               } else if (item.href === '/decks') {
-                 // For now, decks will point to the general meeting list
-                 itemPath = '/meeting';
+                 // For now, decks will point to the first meeting with slides
+                 itemPath = '/meeting/1/edit-slides';
               }
               else {
                 itemPath = item.href;
               }
               
-              const isActive = (item.href === '/decks' || item.href === '/meeting')
-                ? pathname.startsWith('/meeting')
-                : pathname === itemPath;
+              const isActive = (item.href === '/decks' && pathname.includes('/edit-slides'))
+                || (item.href === '/meeting' && (pathname === '/meeting' || /^\/meeting\/\d+$/.test(pathname)))
+                || pathname === itemPath;
+
 
               return(
               <SidebarMenuItem key={item.href}>
@@ -179,5 +171,3 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     </SidebarProvider>
   );
 }
-
-    
