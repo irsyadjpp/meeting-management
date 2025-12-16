@@ -16,8 +16,8 @@ export function MeetingList() {
       <CardContent className="flex-grow">
         <div className="space-y-4">
           {meetings.slice(0, 4).map((meeting) => (
-            <Link key={meeting.id} href={`/meeting/${meeting.id}`} passHref>
-              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+            <Link key={meeting.id} href={`/meeting/${meeting.id}`} className="block p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+              <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="font-medium">{meeting.title}</p>
                   <p className="text-sm text-muted-foreground">

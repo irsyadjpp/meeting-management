@@ -49,12 +49,12 @@ export function UpcomingMeeting() {
               <span>{upcomingMeeting.startTime}</span>
             </div>
           </div>
-          <Link href={`/meeting/${upcomingMeeting.id}`} passHref legacyBehavior>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+          <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+            <Link href={`/meeting/${upcomingMeeting.id}`}>
               <Video className="mr-2 h-4 w-4" />
               Join Meeting
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
