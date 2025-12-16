@@ -3,14 +3,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { meetings } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Video, Calendar, Clock } from "lucide-react";
+import { Video, Calendar, Clock, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
+import { useState, useEffect } from "react";
 
 export function UpcomingMeeting() {
-  const upcomingMeeting = meetings.find(m => new Date(m.date) >= new Date() && m.status !== 'Completed');
+  const [upcomingMeeting, setUpcomingMeeting] = useState<(typeof meetings)[0] | undefined | null>(undefined);
   const bgImage = PlaceHolderImages.find(img => img.id === 'upcomingMeeting');
+
+  useEffect(() => {
+    const nextMeeting = meetings.find(m => new Date(m.date) >= new Date() && m.status !== 'Completed');
+    setUpcomingMeeting(nextMeeting || null);
+  }, []);
+
+
+  if (upcomingMeeting === undefined) {
+    return (
+      <Card className="glassmorphic h-full flex flex-col items-center justify-center text-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="text-muted-foreground mt-2">Finding next meeting...</p>
+      </Card>
+    );
+  }
 
   if (!upcomingMeeting) {
     return (
