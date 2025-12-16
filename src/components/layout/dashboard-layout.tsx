@@ -20,7 +20,7 @@ import {
   Settings,
   Video,
   CheckSquare,
-  User,
+  Users,
   Bell,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
@@ -37,6 +37,7 @@ import {
 const navItems = [
   { href: '/', icon: LayoutGrid, label: 'Dashboard' },
   { href: '/meetings', icon: Video, label: 'Meetings' },
+  { href: '/team', icon: Users, label: 'Team' },
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
 ];
 
