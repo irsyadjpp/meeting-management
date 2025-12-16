@@ -11,7 +11,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      const role = user.role.toLowerCase().replace(' ', '-');
+      const role = user.role.toLowerCase().replace(/ /g, '-');
       router.replace(`/${role}/dashboard`);
     }
   }, [isAuthenticated, user, router]);
@@ -22,7 +22,7 @@ export default function HomePage() {
 
   // Render a loading state while redirecting
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex h-screen items-center justify-center bg-background text-foreground">
       <p>Loading your dashboard...</p>
     </div>
   );
