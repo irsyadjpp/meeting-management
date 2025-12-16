@@ -1,122 +1,75 @@
-"use client";
-
+'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import type { Slide } from '@/hooks/use-slide-deck';
-import { Button } from '../ui/button';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { Slide } from './slide-deck-manager';
 
-interface PresentationOverlayProps {
-  slides: Slide[];
-  onExit: () => void;
-}
+export function PresentationOverlay({ slides, onExit }: { slides: Slide[], onExit: () => void }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const currentSlide = slides[currentIndex];
 
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? '100%' : '-100%',
-    opacity: 0,
-    scale: 0.8,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction < 0 ? '100%' : '-100%',
-    opacity: 0,
-    scale: 0.8,
-  }),
-};
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') setCurrentIndex(prev => Math.min(prev + 1, slides.length - 1));
+            if (e.key === 'ArrowLeft') setCurrentIndex(prev => Math.max(prev - 1, 0));
+            if (e.key === 'Escape') onExit();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [slides.length, onExit]);
 
-export function PresentationOverlay({ slides, onExit }: PresentationOverlayProps) {
-  const [[page, direction], setPage] = useState([0, 0]);
-
-  const paginate = (newDirection: number) => {
-    const newPage = page + newDirection;
-    if (newPage >= 0 && newPage < slides.length) {
-      setPage([newPage, newDirection]);
-    }
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') {
-        paginate(1);
-      } else if (e.key === 'ArrowLeft') {
-        paginate(-1);
-      } else if (e.key === 'Escape') {
-        onExit();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [page, onExit]);
-
-  const activeSlide = slides[page];
-
-  return (
-    <div className="fixed inset-0 bg-[#121212] z-50 flex flex-col items-center justify-center p-4">
-      <AnimatePresence initial={false} custom={direction}>
-        <motion.div
-          key={page}
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: 'spring', stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 },
-          }}
-          className="w-full h-full max-w-6xl flex flex-col items-center justify-center text-white"
+    return (
+        <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white"
         >
-          {activeSlide && (
-            <>
-              <h1 className="text-5xl md:text-7xl font-bold text-primary mb-8 text-center">{activeSlide.title}</h1>
-              {activeSlide.type === 'content' && (
-                <ul className="space-y-4">
-                  {activeSlide.bullets.map((bullet, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1 }}
-                      className="text-2xl md:text-4xl"
+            {/* Controls */}
+            <div className="absolute top-6 right-6 z-50">
+                <Button variant="ghost" onClick={onExit} className="rounded-full hover:bg-white/20"><X /></Button>
+            </div>
+            
+            {/* Slide Content */}
+            <div className="w-full max-w-6xl px-12">
+                <AnimatePresence mode='wait'>
+                    <motion.div
+                        key={currentIndex}
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="flex flex-col gap-8"
                     >
-                      {bullet}
-                    </motion.li>
-                  ))}
-                </ul>
-              )}
-              {activeSlide.type === 'title' && activeSlide.bullets.length > 0 && (
-                <p className="text-xl md:text-3xl text-muted-foreground mt-4">{activeSlide.bullets[0]}</p>
-              )}
-              {activeSlide.type === 'image' && activeSlide.imageUrl && (
-                  <div className="w-full aspect-video relative mt-4">
-                      <img src={activeSlide.imageUrl} alt={activeSlide.title} className="object-contain w-full h-full"/>
-                  </div>
-              )}
-            </>
-          )}
-        </motion.div>
-      </AnimatePresence>
+                        <h1 className="text-6xl font-black uppercase tracking-tighter text-[#ca1f3d]">
+                            {currentSlide.title}
+                        </h1>
+                        <div className="h-1 w-32 bg-[#ffbe00]" />
+                        
+                        {currentSlide.type === 'image' && currentSlide.imageUrl ? (
+                            <img src={currentSlide.imageUrl} className="max-h-[60vh] rounded-lg object-contain" />
+                        ) : (
+                            <ul className="space-y-6 text-3xl font-medium text-gray-300">
+                                {currentSlide.bullets.map((point, i) => (
+                                    <li key={i} className="flex items-start gap-4">
+                                        <span className="mt-2.5 h-3 w-3 rounded-full bg-[#ffbe00]" />
+                                        {point}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
-      {/* Controls */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 opacity-20 hover:opacity-100 transition-opacity">
-          <div className="glassmorphic flex items-center gap-4 p-2 rounded-full">
-            <Button variant="ghost" size="icon" onClick={() => paginate(-1)} disabled={page === 0}>
-                <ArrowLeft />
-            </Button>
-            <span className="font-mono text-sm w-12 text-center">{page + 1} / {slides.length}</span>
-             <Button variant="ghost" size="icon" onClick={() => paginate(1)} disabled={page === slides.length - 1}>
-                <ArrowRight />
-            </Button>
-          </div>
-      </div>
-       <Button variant="ghost" size="icon" onClick={onExit} className="absolute top-5 right-5 text-white/50 hover:text-white">
-            <X size={32} />
-        </Button>
-    </div>
-  );
+            {/* Bottom Bar */}
+            <div className="absolute bottom-0 left-0 right-0 flex justify-between p-6 opacity-0 hover:opacity-100 transition-opacity bg-gradient-to-t from-black/80 to-transparent">
+                <span className="text-sm font-mono text-gray-500">BCC 2026 PRESENTATION MODE</span>
+                <div className="flex gap-4">
+                    <Button variant="outline" size="icon" onClick={() => setCurrentIndex(p => Math.max(p - 1, 0))}><ChevronLeft /></Button>
+                    <span className="flex items-center font-mono">{currentIndex + 1} / {slides.length}</span>
+                    <Button variant="outline" size="icon" onClick={() => setCurrentIndex(p => Math.min(p + 1, slides.length - 1))}><ChevronRight /></Button>
+                </div>
+            </div>
+        </motion.div>
+    );
 }
