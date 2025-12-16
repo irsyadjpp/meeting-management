@@ -9,17 +9,13 @@ import {
   MoreVertical, 
   Image as ImageIcon, 
   Type, 
-  // Layout, // Unused import removed
-  // Save, // Unused import removed
-  // Menu // Unused import removed
+  List
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// import { Card } from '@/components/ui/card'; // Unused import removed
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-// Removed PresentationOverlay import
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -38,35 +34,70 @@ interface SlideDeckManagerProps {
   initialSlides?: Slide[];
 }
 
-// Mock Data Default jika kosong
+// --- UPDATED DATA SESUAI PRESENTATION MODE ---
 const defaultSlides: Slide[] = [
   {
     id: '1',
     type: 'title',
-    title: 'BCC 2026 Coordination',
-    bullets: ['Integritas, Solidaritas, Sportivitas'],
-    note: 'Sambut semua peserta dan jelaskan visi besar.'
+    title: 'GAME ON: Kick-off Meeting',
+    bullets: ['BCC 2026', 'Integritas & Sportivitas'],
+    note: 'PRESS SPACE TO START'
   },
   {
     id: '2',
     type: 'content',
-    title: 'Agenda Hari Ini',
-    bullets: ['Update Sponsorship', 'Pembagian Tugas Inti', 'Skema Budgeting'],
-    note: 'Fokus pada poin 2 karena krusial.'
+    title: 'Sponsorship Status Board',
+    bullets: [
+      '✅ Bebas Cedera: DEAL (Feedback OK)',
+      '⚠️ Bank BJB: PENDING (Menunggu Konfirmasi)',
+      '⚠️ Flypower: PENDING (Proposal Terkirim)',
+      '⛔ Ayo Indonesia: ON HOLD',
+      '🔄 Eiger: RESUBMIT (H-3/H-1 Bulan)'
+    ],
+    note: 'Progress 35% Secured. Fokus kawal BJB & Flypower.'
   },
   {
     id: '3',
-    type: 'image',
-    title: 'Venue Layout',
-    bullets: [],
-    imageUrl: 'https://images.unsplash.com/photo-1626224583764-84786c713608?auto=format&fit=crop&q=80&w=800',
-    note: 'Jelaskan alur masuk atlet.'
+    type: 'content',
+    title: 'Performance Metrics (Honor)',
+    bullets: [
+      'Kinerja (35%): Eksekusi & Target',
+      'Struktur (25%): Risiko & Hirarki',
+      'Dampak (25%): Efisiensi & Kualitas',
+      'Profesional (15%): Etika & Tim'
+    ],
+    note: 'Evaluator: SC + Peer Review 360° (Sesama SC saling menilai).'
+  },
+  {
+    id: '4',
+    type: 'content',
+    title: 'Starting Lineup (Task Force)',
+    bullets: [
+      '👑 Advisor: Aris Indro (Guardian)',
+      '🧢 Director: Irsyad Jamal (Decision Maker)',
+      '📝 Secretary: Rizki & Annisa (Admin)',
+      '💰 Finance: Selvi Yulia (Gatekeeper)'
+    ],
+    note: 'Tim Inti / Steering Committee.'
+  },
+  {
+    id: '5',
+    type: 'content',
+    title: 'Mission Timeline',
+    bullets: [
+      'JAN: Open Registration',
+      'FEB: Sponsorship Run (Roadshow)',
+      'MAR: Registration Closed',
+      'APR: Roster Lock',
+      'MEI: Final Prep (Tech Meeting)',
+      'JUN-JUL: MAIN EVENT 🏆'
+    ],
+    note: 'Roadmap menuju puncak acara.'
   }
 ];
 
 export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: SlideDeckManagerProps) {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
-  // Removed isPresenting state since we are navigating to a new page
   const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -99,7 +130,6 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
   };
 
   const startPresentation = () => {
-    // Navigasi ke halaman Presentation Page yang baru dibuat
     router.push(`/meeting/${meetingId}/presentation`);
   };
 
@@ -181,7 +211,7 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
                             {/* Mini Preview Content */}
                             <div className="flex h-full flex-col p-4">
                                 <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                                    {slide.type === 'image' ? <ImageIcon className="h-3 w-3" /> : <Type className="h-3 w-3" />}
+                                    {slide.type === 'image' ? <ImageIcon className="h-3 w-3" /> : slide.type === 'title' ? <Type className="h-3 w-3" /> : <List className="h-3 w-3" />}
                                     {slide.type}
                                 </div>
                                 <h3 className="line-clamp-2 text-sm font-bold leading-tight text-foreground">
@@ -193,10 +223,16 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
                                     </div>
                                 )}
                                 {slide.type !== 'image' && (
-                                    <div className="mt-2 space-y-1">
+                                    <div className="mt-3 space-y-1.5">
                                         {slide.bullets.slice(0, 3).map((bullet, i) => (
-                                            <div key={i} className="h-1.5 w-full rounded-full bg-muted/20" />
+                                            <div key={i} className="flex items-center gap-2">
+                                                <div className="h-1 w-1 rounded-full bg-[#ffbe00]" />
+                                                <p className="line-clamp-1 text-[10px] text-muted-foreground">{bullet}</p>
+                                            </div>
                                         ))}
+                                        {slide.bullets.length > 3 && (
+                                            <p className="text-[9px] italic text-muted-foreground/50">+{slide.bullets.length - 3} more</p>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -252,23 +288,23 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold uppercase text-muted-foreground">Bullet Points (One per line)</label>
+                            <label className="text-xs font-semibold uppercase text-muted-foreground">Content Points (One per line)</label>
                             <Textarea 
                                 value={editingSlide.bullets.join('\n')} 
                                 onChange={(e) => handleUpdateSlide({...editingSlide, bullets: e.target.value.split('\n')})}
-                                className="min-h-[150px] bg-muted/50"
+                                className="min-h-[200px] bg-muted/50 font-mono text-xs leading-relaxed"
                                 placeholder="- Point 1..."
                             />
                         </div>
                     )}
 
                     <div className="space-y-2">
-                         <label className="text-xs font-semibold uppercase text-muted-foreground">Speaker Notes</label>
+                         <label className="text-xs font-semibold uppercase text-muted-foreground">Speaker Notes / Evaluator Info</label>
                          <Textarea 
                             value={editingSlide.note || ''}
                             onChange={(e) => handleUpdateSlide({...editingSlide, note: e.target.value})}
-                            className="bg-yellow-500/10 text-yellow-200/80" 
-                            placeholder="Don't forget to mention..."
+                            className="bg-yellow-500/10 text-yellow-200/80 min-h-[100px]" 
+                            placeholder="Add notes..."
                         />
                     </div>
                 </div>
@@ -278,5 +314,3 @@ export function SlideDeckManager({ meetingId, initialSlides = defaultSlides }: S
     </div>
   );
 }
-
-    
