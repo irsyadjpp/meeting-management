@@ -286,47 +286,67 @@ const SlideTaskForce = () => {
     )
 }
 
-// SLIDE 5: NEXT STEPS (THE ROADMAP)
-const SlideRoadmap = () => (
-    <div className="flex h-full w-full flex-col justify-center px-16">
-        <h2 className="mb-16 text-4xl font-bold text-white">MISSION ROADMAP</h2>
-        
-        <div className="relative">
-            {/* Line */}
-            <div className="absolute left-0 top-1/2 h-2 w-full -translate-y-1/2 bg-gray-800 rounded-full" />
-            <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-                className="absolute left-0 top-1/2 h-2 -translate-y-1/2 bg-[#ca1f3d] rounded-full shadow-[0_0_20px_#ca1f3d]" 
-            />
+// SLIDE 5: NEXT STEPS (THE MISSION ROADMAP) - REVISED
+const SlideRoadmap = () => {
+    const timeline = [
+        { month: "JAN", title: "Open Registration", desc: "Sounding & Pendaftaran Dibuka", icon: "📢" },
+        { month: "FEB", title: "Sponsorship Run", desc: "Roadshow & Media Campaign", icon: "🚀" }, // Idea for Feb
+        { month: "MAR", title: "Registration Closed", desc: "Batas Akhir Pendaftaran", icon: "🔒" },
+        { month: "APR", title: "Roster Lock", desc: "Batas Pengajuan Ulang Tim", icon: "📝" },
+        { month: "MEI", title: "Final Prep", desc: "Tech. Meeting & Final Leveling", icon: "⚖️" },
+        { month: "JUN-JUL", title: "THE MAIN EVENT", desc: "Puncak Tournament BCC 2026", icon: "🏆", active: true },
+    ];
 
-            {/* Points */}
-            <div className="relative z-10 flex w-full justify-between">
-                {[
-                    { title: "Minggu 1", desc: "Finalisasi Tim" },
-                    { title: "Minggu 2", desc: "Sponsorship Run" },
-                    { title: "Minggu 3", desc: "Venue Check" },
-                    { title: "GO LIVE", desc: "BCC 2026", active: true }
-                ].map((step, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 1 + (i * 0.3) }}
-                        className="flex flex-col items-center gap-4"
-                    >
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full border-4 border-[#121212] ${step.active ? 'bg-[#ffbe00] h-12 w-12' : 'bg-[#ca1f3d]'}`} />
-                        <div className="text-center">
-                            <p className={`font-bold ${step.active ? 'text-[#ffbe00] text-xl' : 'text-white'}`}>{step.title}</p>
-                            <p className="text-xs text-gray-500">{step.desc}</p>
-                        </div>
-                    </motion.div>
-                ))}
+    return (
+        <div className="flex h-full w-full flex-col justify-center px-8">
+            <h2 className="mb-12 text-center text-4xl font-black text-white uppercase tracking-widest">
+                Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]">Timeline</span>
+            </h2>
+            
+            <div className="relative mt-8">
+                {/* Connecting Line */}
+                <div className="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 bg-gray-800" />
+                <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2.5, ease: "easeInOut" }}
+                    className="absolute left-0 top-1/2 h-1 -translate-y-1/2 bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]" 
+                />
+
+                {/* Timeline Points */}
+                <div className="relative z-10 grid grid-cols-6 gap-4">
+                    {timeline.map((step, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 + (i * 0.2) }}
+                            className="flex flex-col items-center text-center group"
+                        >
+                            {/* Icon Circle */}
+                            <div className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#0a0a0a] text-2xl shadow-xl transition-transform group-hover:scale-110 ${step.active ? 'bg-[#ffbe00] text-black scale-110' : 'bg-[#1a1a1a] text-white'}`}>
+                                {step.icon}
+                            </div>
+                            
+                            {/* Month Badge */}
+                            <Badge variant="outline" className={`mb-2 border-none ${step.active ? 'bg-[#ca1f3d] text-white' : 'bg-white/10 text-gray-400'}`}>
+                                {step.month}
+                            </Badge>
+
+                            {/* Text Content */}
+                            <h3 className={`text-sm font-bold uppercase leading-tight ${step.active ? 'text-[#ffbe00]' : 'text-white'}`}>
+                                {step.title}
+                            </h3>
+                            <p className="mt-1 text-[10px] text-gray-500 px-2 leading-snug">
+                                {step.desc}
+                            </p>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 
 // --- MAIN PAGE COMPONENT ---
