@@ -1,15 +1,16 @@
+
 import { PlaceHolderImages } from './placeholder-images';
 
 const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
 
 export const teamMembers = [
-  { id: 1, name: 'Irsyad Jamal Pratama Putra', role: 'Project Director', avatar: findImage('avatar1') },
-  { id: 2, name: 'Aris Indro', role: 'Advisor', avatar: findImage('avatar2') },
-  { id: 3, name: 'Rizki Karami', role: 'Sekretaris 1 (Strategic)', avatar: findImage('avatar3') },
-  { id: 4, name: 'Annisa Syafira', role: 'Sekretaris 2 (Ops)', avatar: findImage('avatar4') },
-  { id: 5, name: 'Selvi Yulia', role: 'Bendahara', avatar: findImage('avatar5') },
-  { id: 6, name: 'Maria Garcia', role: 'Lead Designer', avatar: findImage('avatar2') },
-  { id: 7, name: 'James Smith', role: 'Lead Developer', avatar: findImage('avatar3') },
+  { id: 1, name: 'Irsyad Jamal Pratama Putra', role: 'Project Director', email: 'irsyad.jamal@bcc.co', avatar: findImage('avatar1') },
+  { id: 2, name: 'Aris Indro', role: 'Advisor', email: 'aris.indro@bcc.co', avatar: findImage('avatar2') },
+  { id: 3, name: 'Rizki Karami', role: 'Sekretaris 1 (Strategic)', email: 'rizki.karami@bcc.co', avatar: findImage('avatar3') },
+  { id: 4, name: 'Annisa Syafira', role: 'Sekretaris 2 (Ops)', email: 'annisa.syafira@bcc.co', avatar: findImage('avatar4') },
+  { id: 5, name: 'Selvi Yulia', role: 'Bendahara', email: 'selvi.yulia@bcc.co', avatar: findImage('avatar5') },
+  { id: 6, name: 'Maria Garcia', role: 'Lead Designer', email: 'maria.garcia@bcc.co', avatar: findImage('avatar2') },
+  { id: 7, name: 'James Smith', role: 'Lead Developer', email: 'james.smith@bcc.co', avatar: findImage('avatar3') },
 ];
 
 export const steeringCommittee = [

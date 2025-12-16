@@ -37,7 +37,7 @@ interface GoogleCalendarContextType {
     user: User;
     login: () => void;
     logout: () => void;
-    createEvent: (eventData: any) => Promise<string>;
+    createEvent: (eventData: any) => Promise<{ htmlLink: string; hangoutLink: string; }>;
     loginAsDirector: () => void;
     loginAsStaff: () => void;
 }
@@ -101,14 +101,18 @@ export function GoogleCalendarProvider({ children }: { children: ReactNode }) {
     }, 500);
   };
   
-  const createEvent = (eventData: any): Promise<string> => {
+  const createEvent = (eventData: any): Promise<{ htmlLink: string; hangoutLink: string; }> => {
     return new Promise((resolve, reject) => {
-        console.log("Mock creating event with data:", eventData);
+        console.log("Mock 'POST /calendar/v3/events' with payload:", eventData);
         setTimeout(() => {
             if (Math.random() > 0.1) { // 90% success rate
-                const mockMeetLink = `https://meet.google.com/abc-defg-hij`;
-                console.log("Mock event created, meet link:", mockMeetLink);
-                resolve(mockMeetLink);
+                const mockMeetId = Math.random().toString(36).substring(2, 15);
+                const response = {
+                    htmlLink: `https://www.google.com/calendar/event?eid=${btoa(mockMeetId)}`,
+                    hangoutLink: `https://meet.google.com/${mockMeetId.slice(0,3)}-${mockMeetId.slice(3,7)}-${mockMeetId.slice(7,11)}`,
+                };
+                console.log("Mock API Success Response:", response);
+                resolve(response);
             } else {
                 console.error("Mock API Error: Failed to create event.");
                 reject(new Error("Failed to create Google Calendar event."));
