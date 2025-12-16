@@ -33,6 +33,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { useState, useEffect } from 'react';
 
 const navItems = [
   { href: '/', icon: LayoutGrid, label: 'Dashboard' },
@@ -41,8 +42,52 @@ const navItems = [
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
 ];
 
+function Header() {
+  return (
+    <header className="flex items-center justify-end h-16 px-4 sm:px-6 lg:px-8 border-b">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon">
+          <Bell className="h-5 w-5" />
+          <span className="sr-only">Notifications</span>
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="@user" />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">BCC Admin</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  admin@bcc.co
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Log out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  );
+}
+
+
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <SidebarProvider>
@@ -86,39 +131,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex items-center justify-end h-16 px-4 sm:px-6 lg:px-8 border-b">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-              <span className="sr-only">Notifications</span>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="@user" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">BCC Admin</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      admin@bcc.co
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
+        {isClient && <Header />}
         <main className="flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
