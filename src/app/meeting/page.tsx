@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -16,79 +15,127 @@ import {
   Video,
   Plus,
   Ghost,
+  MapPin,
+  ArrowUpRight,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { NewMeetingDialog } from '@/components/dashboard/new-meeting-dialog';
 import { useGoogleCalendar } from '@/hooks/use-google-calendar';
 import { useToast } from '@/hooks/use-toast';
 
+// --- TYPES & UTILS ---
 type Status = 'All' | 'Upcoming' | 'Live' | 'Completed';
 
-const statusColors: { [key in typeof meetings[0]['status']]: string } = {
-  Live: 'border-red-500 bg-red-500/10',
-  Upcoming: 'border-yellow-500 bg-yellow-500/10',
-  Completed: 'border-green-500 bg-green-500/10',
+const statusConfig = {
+  Live: {
+    color: 'bg-[#ca1f3d]',
+    border: 'border-[#ca1f3d]',
+    glow: 'shadow-[0_0_15px_#ca1f3d]',
+    label: 'LIVE NOW'
+  },
+  Upcoming: {
+    color: 'bg-[#ffbe00]',
+    border: 'border-[#ffbe00]',
+    glow: 'shadow-[0_0_10px_rgba(255,190,0,0.4)]',
+    label: 'SCHEDULED'
+  },
+  Completed: {
+    color: 'bg-green-500',
+    border: 'border-green-500',
+    glow: '',
+    label: 'DONE'
+  }
 };
 
-const statusPillColors: { [key in typeof meetings[0]['status']]: string } = {
-    Live: 'bg-red-500/80 text-white animate-pulse',
-    Upcoming: 'bg-blue-500/80 text-white',
-    Completed: 'bg-secondary text-secondary-foreground',
-}
+// --- COMPONENTS ---
 
-const MeetingCard = ({ meeting }: { meeting: typeof meetings[0] }) => {
+const MeetingCard = ({ meeting, index }: { meeting: typeof meetings[0], index: number }) => {
+  const status = statusConfig[meeting.status as keyof typeof statusConfig] || statusConfig.Completed;
+  const isLive = meeting.status === 'Live';
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="w-full"
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
+      className="group relative w-full"
     >
       <Link href={`/meeting/${meeting.id}`}>
-        <div className={`glassmorphic group relative flex items-center gap-4 rounded-lg p-4 transition-all hover:bg-white/10 ${statusColors[meeting.status]}`}>
-            <div className={`absolute left-0 top-0 h-full w-1 rounded-l-lg ${statusColors[meeting.status].replace('bg-', 'border-').split(' ')[0]}`} />
-            <div className="flex h-16 w-16 flex-col items-center justify-center rounded-md bg-muted/50">
-                <span className="text-3xl font-bold">{format(meeting.date, 'dd')}</span>
-                <span className="text-xs font-semibold uppercase text-muted-foreground">{format(meeting.date, 'MMM')}</span>
+        <div className={`relative overflow-hidden rounded-[24px] border border-white/5 bg-[#121212] p-6 transition-all duration-300 hover:bg-[#1a1a1a] hover:border-white/10 group-hover:scale-[1.01] ${isLive ? 'border-[#ca1f3d]/50' : ''}`}>
+          
+          {/* Status Indicator Line (Left) */}
+          <div className={`absolute left-0 top-0 h-full w-1.5 ${status.color} ${status.glow}`} />
+
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            
+            {/* 1. Date Badge (Sporty Look) */}
+            <div className="flex shrink-0 flex-row items-center gap-4 sm:flex-col sm:gap-1">
+              <div className="flex h-20 w-20 flex-col items-center justify-center rounded-2xl bg-white/5 font-black uppercase tracking-tighter backdrop-blur-md border border-white/5 group-hover:bg-white/10 transition-colors">
+                <span className="text-sm text-[#ffbe00]">{format(meeting.date, 'MMM')}</span>
+                <span className="text-4xl text-white">{format(meeting.date, 'dd')}</span>
+              </div>
             </div>
-            <div className="flex-1 space-y-1">
-                <p className="font-semibold text-foreground">{meeting.title}</p>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className='flex items-center gap-1.5'>
-                        <Clock className="h-4 w-4"/>
-                        <span>{meeting.startTime} - {meeting.endTime}</span>
-                    </div>
-                    {meeting.googleMeetLink && (
-                        <Badge variant="secondary" className="bg-green-500/20 text-green-300">
-                            <Video className="mr-1 h-3 w-3" /> GMeet
-                        </Badge>
-                    )}
-                </div>
+
+            {/* 2. Main Content */}
+            <div className="flex-1 space-y-2">
+               <div className="flex items-center gap-3">
+                 <Badge variant="outline" className={`border-none ${status.color}/20 ${status.color.replace('bg-', 'text-')} font-mono text-[10px] uppercase tracking-widest`}>
+                    {status.label}
+                 </Badge>
+                 {meeting.googleMeetLink && (
+                    <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 gap-1 border-none">
+                        <Video className="h-3 w-3" /> GMeet
+                    </Badge>
+                 )}
+               </div>
+               
+               <h3 className="text-xl font-bold leading-tight text-white group-hover:text-[#ffbe00] transition-colors">
+                 {meeting.title}
+               </h3>
+
+               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-4 w-4 text-[#ca1f3d]" />
+                    <span>{meeting.startTime} - {meeting.endTime}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <span>GOR KONI Bandung</span>
+                  </div>
+               </div>
             </div>
-             <div className="flex h-full flex-col items-end justify-between">
-                <div className="flex -space-x-2 overflow-hidden">
-                    {meeting.attendees.slice(0, 3).map((attendee, index) => (
-                        <Avatar key={index} className="h-6 w-6 border-2 border-background">
-                            <AvatarImage src={attendee.avatar?.imageUrl} data-ai-hint={attendee.avatar?.imageHint} />
-                            <AvatarFallback>{attendee.name.charAt(0)}</AvatarFallback>
+
+            {/* 3. Right Section: Attendees & Action */}
+            <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:gap-2">
+                <div className="flex -space-x-3">
+                    {meeting.attendees.slice(0, 4).map((attendee, i) => (
+                        <Avatar key={i} className="h-10 w-10 border-2 border-[#121212] transition-transform hover:z-10 hover:scale-110">
+                            <AvatarImage src={attendee.avatar?.imageUrl} />
+                            <AvatarFallback className="bg-[#ffbe00] text-black font-bold text-xs">{attendee.name.substring(0,2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                     ))}
-                    {meeting.attendees.length > 3 && (
-                        <Avatar className="h-6 w-6 border-2 border-background">
-                            <AvatarFallback>+{meeting.attendees.length - 3}</AvatarFallback>
-                        </Avatar>
+                    {meeting.attendees.length > 4 && (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#121212] bg-[#2a2a2a] text-xs font-bold text-white">
+                            +{meeting.attendees.length - 4}
+                        </div>
                     )}
                 </div>
-                <Badge className={`${statusPillColors[meeting.status]}`}>{meeting.status}</Badge>
+                
+                <Button size="icon" variant="ghost" className="rounded-full bg-white/5 hover:bg-[#ffbe00] hover:text-black transition-all">
+                    <ArrowUpRight className="h-5 w-5" />
+                </Button>
             </div>
+          </div>
+          
+          {/* Background Decor */}
+          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/5 blur-3xl group-hover:bg-[#ffbe00]/10 transition-colors" />
         </div>
       </Link>
     </motion.div>
   );
 };
-
 
 export default function MeetingsPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -97,159 +144,163 @@ export default function MeetingsPage() {
     const { isAuthenticated, createEvent } = useGoogleCalendar();
     const { toast } = useToast();
 
+    // --- LOGIC: CREATE MEETING (Simulated) ---
     const handleCreateMeeting = async (meetingData: any) => {
+        // ... (Logika sama seperti sebelumnya, tidak diubah agar fungsionalitas tetap jalan)
         if (meetingData.syncToGoogle && !isAuthenticated) {
-            toast({
-                title: "Authentication Required",
-                description: "Please sign in with Google to sync to your calendar.",
-                variant: "destructive",
-            });
+            toast({ title: "Auth Required", description: "Please sign in with Google first.", variant: "destructive" });
             return;
         }
 
         const newMeetingPayload = {
             summary: `BCC 2026: ${meetingData.title}`,
-            description: meetingData.description || 'A new meeting created from BCC Meeting Management.',
+            description: meetingData.description || 'Generated by BCC System.',
             start: { dateTime: new Date(meetingData.dateTime).toISOString() },
-            end: { dateTime: new Date(new Date(meetingData.dateTime).getTime() + 60 * 60 * 1000).toISOString() },
+            end: { dateTime: new Date(new Date(meetingData.dateTime).getTime() + 3600000).toISOString() },
             attendees: meetingData.participants.map((p: any) => ({ email: p.email })),
-             conferenceData: {
-                createRequest: { 
-                    requestId: `bcc-meeting-${Date.now()}`, 
-                    conferenceSolutionKey: { type: "hangoutsMeet" } 
-                }
-            },
+             conferenceData: { createRequest: { requestId: `bcc-${Date.now()}`, conferenceSolutionKey: { type: "hangoutsMeet" } } },
         };
         
         try {
             const calendarData = meetingData.syncToGoogle && isAuthenticated ? await createEvent(newMeetingPayload) : null;
-            
             const newMeeting = {
                 id: (meetings.length + 1).toString(),
                 title: meetingData.title,
                 date: new Date(meetingData.dateTime),
                 startTime: new Date(meetingData.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                endTime: new Date(new Date(meetingData.dateTime).getTime() + 60 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                endTime: new Date(new Date(meetingData.dateTime).getTime() + 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 attendees: meetingData.participants.map((p:any) => teamMembers.find(tm => tm.id === p.id)).filter(Boolean),
                 status: 'Upcoming',
-                agenda: meetingData.agenda.split('\n'),
+                agenda: meetingData.agenda?.split('\n') || [],
                 minutes: null,
                 isSyncedToGoogle: !!calendarData,
                 googleMeetLink: calendarData?.hangoutLink,
             };
-            
-            // This is a mock update. In a real app, you'd use state management.
             meetings.unshift(newMeeting as any);
-
-            toast({
-                title: "Meeting Created!",
-                description: calendarData ? "Event synced to Google Calendar and Meet link generated." : "Meeting created locally.",
-            });
+            toast({ title: "Mission Scheduled!", description: "Meeting has been added to the logs.", className: "bg-[#ffbe00] text-black border-none" });
             setNewMeetingOpen(false);
-
         } catch (error) {
-            toast({
-                title: "Creation Failed",
-                description: "Could not create the meeting.",
-                variant: "destructive",
-            });
+            toast({ title: "Failed", description: "Could not create meeting.", variant: "destructive" });
         }
     };
 
+    // --- LOGIC: FILTERING ---
+    const filteredMeetings = meetings
+        .filter(m => activeFilter === 'All' ? true : m.status === activeFilter)
+        .filter(m => m.title.toLowerCase().includes(searchTerm.toLowerCase()) || m.agenda.some(a => a.toLowerCase().includes(searchTerm.toLowerCase())))
+        .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  const filteredMeetings = meetings
-    .filter(meeting => {
-      if (activeFilter === 'All') return true;
-      if (activeFilter === 'Live' && meeting.status === 'Live') return true;
-      if (activeFilter === 'Upcoming' && meeting.status === 'Upcoming') return true;
-      if (activeFilter === 'Completed' && meeting.status === 'Completed') return true;
-      return false;
-    })
-    .filter(meeting =>
-      meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      meeting.agenda.some(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+    return (
+        <DashboardLayout>
+            <div className="relative flex min-h-full flex-col bg-[#050505] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#ffbe00] selection:text-black">
+                
+                {/* 1. HEADER & CONTROLS */}
+                <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <h1 className="text-4xl font-black uppercase tracking-tight text-white md:text-5xl">
+                            Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca1f3d] to-[#ffbe00]">Logs</span>
+                        </h1>
+                        <p className="mt-2 text-gray-400 font-medium max-w-md">
+                            Atur strategi, koordinasi tim, dan pantau jadwal turnamen BCC 2026.
+                        </p>
+                    </div>
 
-  return (
-    <DashboardLayout>
-      <div className="relative flex h-full flex-col">
-        <header className="sticky top-0 z-10 glassmorphic flex flex-col gap-4 p-4 sm:p-6 border-b">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Meeting Logs</h1>
-            <p className="text-muted-foreground">Your command center for all scheduled missions.</p>
-          </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Search by title or agenda..."
-              className="w-full pl-10"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {(['All', 'Upcoming', 'Live', 'Completed'] as Status[]).map(status => (
-              <Button
-                key={status}
-                variant={activeFilter === status ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveFilter(status)}
-                className={`rounded-full ${activeFilter === status ? 'bg-primary text-primary-foreground' : 'bg-transparent'}`}
-              >
-                {status}
-              </Button>
-            ))}
-          </div>
-        </header>
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        {/* Search Bar */}
+                        <div className="relative group">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-hover:text-[#ffbe00] transition-colors" />
+                            <Input
+                                placeholder="Search agenda..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="w-full sm:w-[280px] rounded-full border-white/10 bg-white/5 pl-10 text-white placeholder:text-gray-600 focus:border-[#ffbe00]/50 focus:bg-white/10 transition-all"
+                            />
+                        </div>
+                        
+                        {/* New Meeting Button (Desktop) */}
+                        <Button 
+                            onClick={() => setNewMeetingOpen(true)}
+                            className="hidden sm:flex rounded-full bg-[#ca1f3d] px-6 font-bold text-white hover:bg-[#a01830] hover:scale-105 transition-all shadow-[0_0_15px_rgba(202,31,61,0.4)]"
+                        >
+                            <Plus className="mr-2 h-4 w-4" /> New Mission
+                        </Button>
+                    </div>
+                </div>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6">
-          <AnimatePresence>
-            {filteredMeetings.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {filteredMeetings.map(meeting => (
-                  <MeetingCard key={meeting.id} meeting={meeting} />
-                ))}
-              </div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center text-center h-full"
-              >
-                <Ghost className="h-24 w-24 text-muted-foreground/50" />
-                <h3 className="mt-4 text-xl font-semibold">No drama today.</h3>
-                <p className="mt-1 text-muted-foreground">Your search returned no results. Time for a coffee?</p>
-                <Button className="mt-6" onClick={() => setNewMeetingOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Schedule Something
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
-        
-        <div className="absolute bottom-6 right-6 z-20">
-            <Button
-              size="lg"
-              className="rounded-full h-16 w-16 shadow-lg"
-              onClick={() => setNewMeetingOpen(true)}
-            >
-              <Plus className="h-6 w-6" />
-              <span className="sr-only">New Meeting</span>
-            </Button>
-        </div>
+                {/* 2. FILTER CHIPS */}
+                <div className="mb-8 flex flex-wrap gap-2">
+                    {(['All', 'Live', 'Upcoming', 'Completed'] as Status[]).map(status => {
+                        const isActive = activeFilter === status;
+                        return (
+                            <button
+                                key={status}
+                                onClick={() => setActiveFilter(status)}
+                                className={`relative rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
+                                    isActive 
+                                    ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-105' 
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                }`}
+                            >
+                                {status}
+                                {status === 'Live' && <span className="absolute -right-1 -top-1 flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ca1f3d] opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-[#ca1f3d]"></span></span>}
+                            </button>
+                        );
+                    })}
+                </div>
 
-        <NewMeetingDialog
-            isOpen={isNewMeetingOpen}
-            onOpenChange={setNewMeetingOpen}
-            onSubmit={handleCreateMeeting}
-            teamMembers={teamMembers}
-            isAuthenticated={isAuthenticated}
-        />
-      </div>
-    </DashboardLayout>
-  );
+                {/* 3. MEETINGS LIST (Masonry/Stack) */}
+                <div className="flex-1 space-y-4 pb-20">
+                    <AnimatePresence mode="popLayout">
+                        {filteredMeetings.length > 0 ? (
+                            filteredMeetings.map((meeting, idx) => (
+                                <MeetingCard key={meeting.id} meeting={meeting} index={idx} />
+                            ))
+                        ) : (
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="flex h-[400px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-white/5 text-center"
+                            >
+                                <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#1a1a1a]">
+                                    <Ghost className="h-10 w-10 text-gray-600" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-white">No Missions Found</h3>
+                                <p className="mt-2 text-gray-400 max-w-xs">Tidak ada jadwal dengan filter ini. Waktunya ngopi atau buat strategi baru?</p>
+                                <Button 
+                                    variant="outline" 
+                                    className="mt-6 rounded-full border-[#ffbe00] text-[#ffbe00] hover:bg-[#ffbe00] hover:text-black"
+                                    onClick={() => { setSearchTerm(''); setActiveFilter('All'); }}
+                                >
+                                    Clear Filters
+                                </Button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* 4. FAB (Mobile Only) */}
+                <motion.div 
+                    initial={{ scale: 0 }} animate={{ scale: 1 }}
+                    className="fixed bottom-6 right-6 z-30 sm:hidden"
+                >
+                    <Button
+                        size="icon"
+                        onClick={() => setNewMeetingOpen(true)}
+                        className="h-16 w-16 rounded-full bg-[#ca1f3d] text-white shadow-[0_0_20px_rgba(202,31,61,0.6)]"
+                    >
+                        <Plus className="h-8 w-8" />
+                    </Button>
+                </motion.div>
+
+                {/* DIALOGS */}
+                <NewMeetingDialog
+                    isOpen={isNewMeetingOpen}
+                    onOpenChange={setNewMeetingOpen}
+                    onSubmit={handleCreateMeeting}
+                    teamMembers={teamMembers}
+                    isAuthenticated={isAuthenticated}
+                />
+            </div>
+        </DashboardLayout>
+    );
 }
-
-    
